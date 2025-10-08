@@ -1,5 +1,7 @@
 # include <stdio.h>
-# include <>
-int main(){
+# include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+int main(int argc, char *args[]){
   
 }
