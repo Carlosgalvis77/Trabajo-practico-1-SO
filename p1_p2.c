@@ -2,8 +2,9 @@
 # include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
-int main(int argc, char *args[]){0
-
+#include <semaphore.h>
+int main(int argc, char *args[]){
+  int sem_getvalue();
   P1=fork();
   if(P1>0){
     
