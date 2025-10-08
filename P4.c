@@ -1,14 +1,18 @@
-# include <stdio.h>
-# include <stdlib.h>
+
+#include <stdio.h>
+#include <semaphore.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
-#include <pthread.h>
-int main(int argc, char *args[]){0
-  sem_t *sem1
-  sem1 = sem_open(/sem1,O_CREAT || O_EXCL,0666,0)
-  if (sem1=="SEM_FAILED"){
+
+
+int main(int argc, char *args[]){
+  sem_t *sem2
+  sem2 = sem_open("/sem2",O_CREAT,0666,0)
+  if (sem2== SEM_FAILED ){
     perror("Ya esta creado el semaforo\n");
   } 
-
+  sem_wait(sem2);
                                  
   
 }
