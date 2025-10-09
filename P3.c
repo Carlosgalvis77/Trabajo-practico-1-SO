@@ -3,8 +3,13 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <stdlib.h>
 
-int main(int argc, char *args[]){
+
+
+int main(int argc, char *argv[]){
   sem_t *sem1;
   sem1 = sem_open("/sem1",O_CREAT,0666,0);
   if (sem1=="SEM_FAILED"){
@@ -25,20 +30,16 @@ int main(int argc, char *args[]){
 
   }
   int N;
-  if((read(fd,N,sizeof(int)))<0){
+  if((read(fd,&N,sizeof(int)))<0){
 
     perror("Error en write de N\n");
     return(-4);
 
   }close(fd);
   //creacion de memoria compartida:
-  const char NOMBRE = "/MEMP3";
+  const char NOMBRE[]= "/MEMP3";
   const int SIZE = (N^2)*8;
-  int fd;
-  void *ptr;
-
   shm_unlink(NOMBRE);
-
   int fd = shm_open(NOMBRE, O_CREAT | O_RDONLY, 0666);
   if (fd < 0) {
     perror("Error en shm_open");
@@ -50,11 +51,15 @@ int main(int argc, char *args[]){
     return (-2);
   }
 
-  ptr = mmap(NULL, SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
-  if (ptr == MAP_FAILED){
-      perror("Error MAP_FAILED");
-      return (-3);
+  void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  if (ptr == MAP_FAILED) {
+    perror("Error MAP_FAILED");
+    return (-3);
   }
+  int arref[N];
+  memcpy(arref,ptr,sizeof(arref));
+  munmap(ptr,SIZE);
+  close(fd);
                                  
   
 }
