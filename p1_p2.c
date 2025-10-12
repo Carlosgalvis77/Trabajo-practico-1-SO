@@ -119,10 +119,12 @@ int main(int argc, char *argv[]){
                 return (-3);
             }
             int l = 1;
-            for(i= atoi(arg[4]); i < atoi(argv[1]);i++){
+            int z = atoi(argv[4]);
+            for(i= 0; i < atoi(argv[1]);i++){
                 //PUNTO CRITICO
                 sem_wait(semH);
-                int potencia_de_dos = pow(2,i);
+                int potencia_de_dos = pow(2,z);
+                z += 1;
                 //aca se agrega el dato al buffer 2
                 if((memcpy(((char *)ptr + l*sizeof(int)),&potencia_de_dos,sizeof(int))) == NULL){
                     perror("Error Memcpy");
