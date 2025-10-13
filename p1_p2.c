@@ -59,13 +59,13 @@ int main(int argc, char *argv[]){
 
     }
 
-    unlink("/tmp/myfifo");
-    if((mkfifo("/tmp/myfifo",0666))<0){
+    unlink("/tmp/myfifo1");
+    if((mkfifo("/tmp/myfifo1",0666))<0){
     
-        perror("Error en mkfifo\n");
+        perror("Error en mkfifo1\n");
         return(-4);
     }
-    int fdp4 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+    int fdp4 = open("/tmp/myfifo1", O_WRONLY | O_CREAT);
     if(fdp4 <  0){
 
         perror("Error en open\n");
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
 
     close(fdp4);
     int v1, v2;
-    if (sem_getvalue(sem1, &v1) == -1 && sem_getvalue(sem2, &v2) == -1) {
+    if (sem_getvalue(sem1, &v1) == -1 || sem_getvalue(sem2, &v2) == -1) {
         perror("P3 o P4 no se han ejecutado");
         return -1; 
     }

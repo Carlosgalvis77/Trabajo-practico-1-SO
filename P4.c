@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
   } 
   printf("P4 se ejecuta y ahora espera a p1_p2\n");
 
-  int fd = open("/tmp/myfifo", O_WRONLY);
+  int fd = open("/tmp/myfifo1", O_RDONLY);
   if((fd < 0)){
 
     perror("Error en open\n");
