@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
         perror("sem_open P2");
         return -2;
     }
-
+    print("p1 trabajando");
   //Mkfifo para mandar el N a P3 para crear la memoria compartida
     unlink("/tmp/myfifo");
     if((mkfifo("/tmp/myfifo",0666))<0){
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
         return(-4);
 
     }
-
+    
     int N = atoi(argv[1]);
     if((write(fd,&N,sizeof(int)))<0){
 
@@ -58,18 +58,14 @@ int main(int argc, char *argv[]){
         return(-4);
 
     }
-    
+    print("se envio N a P3 y P4, despertando a p3 y p4");
     sem_post(sem1);
     sem_post(sem2);
 
     close(fd);
     int v1, v2;
-    if (sem_getvalue(sem1, &v1) == -1) {
-        perror("sem_getvalue sem1");
-        return -1; 
-    }
-    if (sem_getvalue(sem2, &v2) == -1) {
-        perror("sem_getvalue sem2"); 
+    if (sem_getvalue(sem1, &v1) == -1 && sem_getvalue(sem2, &v2) == -1) {
+        perror("P3 o P4 no se han ejecutado");
         return -1; 
     }
 
