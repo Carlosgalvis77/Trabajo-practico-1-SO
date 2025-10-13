@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
   printf("P4 se ejecuta y ahora espera a p1_p2\n");
   sem_wait(sem2);
 
-  printt("P1 me desperto\n");
+  printf("P1 me desperto\n");
 
   int fd = open("/tmp/myfifo", O_WRONLY);
   if((fd < 0)){
