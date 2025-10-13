@@ -22,14 +22,14 @@ int main(int argc, char *argv[]){
         return -2;
     }
     
-    //sem_unlink(semP);
+    sem_unlink("/semP");
     sem_t *semP = sem_open("/semP", O_CREAT, 0666, 1);
     if (semP == SEM_FAILED) {
         perror("sem_open P1");
         return -2;
     }
 
-    //sem_unlink(semH);
+    sem_unlink("/semH");
     sem_t *semH = sem_open("/semH", O_CREAT, 0666, 0);
     if (semH == SEM_FAILED) {
         perror("sem_open P2");
@@ -60,8 +60,18 @@ int main(int argc, char *argv[]){
     }
   
     close(fd);
-    if (sem_getvalue(sem1)<=-1 && sem_getvalue(sem2)<=-1 ){
-    
+    int v1, v2;
+    if (sem_getvalue(sem1, &v1) == -1) {
+        perror("sem_getvalue sem1");
+        return -1; 
+    }
+    if (sem_getvalue(sem2, &v2) == -1) {
+        perror("sem_getvalue sem2"); 
+        return -1; 
+    }
+
+    if (v1 == 0 && v2 ==0){
+
         pid_t P2=fork();
 
         if(P2>0){
@@ -71,7 +81,7 @@ int main(int argc, char *argv[]){
 
             // Aca se crea el bufer y se agrega b
             const char NOMBRE [] = "/MEMP3";
-            const int SIZE = pow(N, 2)*8;
+            const int SIZE = (2 * (N+2)) * sizeof(int);
             int fd = shm_open(NOMBRE, O_RDWR, 0666);
             if (fd < 0) {
                 perror("Error en shm_open"); 
@@ -96,20 +106,23 @@ int main(int argc, char *argv[]){
                     return (-5);
                 }
                 j += 2;
-                sem_post(semH);
-                //FIN DE PUNTO CRITICO
-                if(i == atoi(argv[1])){
+                if(i == atoi(argv[1]) - 1){
+                    int testigo_p1 = -1;
+                    if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
+                        perror("Error Memcpy");
+                        return (-6);
+                    }
                     sem_post(sem1);
                 }
-                
-            }
+                sem_post(semH);
+                //FIN DE PUNTO CRITICO
             munmap(ptr,SIZE);
             close(fd);
                 
         }else if(P2==0){
 
             const char NOMBRE [] = "/MEMP3";
-            const int SIZE = pow(N, 2)*8;
+            const int SIZE = (2 * (N+2)) * sizeof(int);
             int fd = shm_open(NOMBRE, O_RDWR, 0666);
             if (fd < 0) {
                 perror("Error en shm_open"); 
@@ -134,6 +147,14 @@ int main(int argc, char *argv[]){
                     return (-5);
                 }
                 l += 2;
+                if(i == atoi(argv[1]) - 1){
+                    int testigo_p2 = -2;
+                    if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
+                        perror("Error Memcpy");
+                        return (-6);
+                    }
+                    sem_post(sem1);
+                }
                 sem_post(semP);
                 //FIN DE PUNTO CRITICO
             }

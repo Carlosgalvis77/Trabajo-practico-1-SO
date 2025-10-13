@@ -7,13 +7,12 @@
 
 
 int main(int argc, char *argv[]){
-  sem_unlink(sem2);
+  sem_unlink("/sem2");
   sem_t *sem2;
   sem2 = sem_open("/sem2",O_CREAT,0666,0);
   if (sem2== SEM_FAILED ){
     perror("Ya esta creado el semaforo\n");
   } 
-  sem_wait(sem2);
 
   int fd = open("/tmp/myfifo", O_WRONLY);
   if((fd < 0)){
@@ -31,6 +30,7 @@ int main(int argc, char *argv[]){
   }close(fd);
   
   const char NOMBRE []= "/MEMP3";
+  const int SIZE = (2 * (N+2)) * sizeof(int);
   int fd = shm_open(NOMBRE, O_RDONLY, 0666);
   if (fd < 0) {
     perror("Error en shm_open"); 
@@ -42,9 +42,26 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
-  int arref[N];
-  memcpy(arref,(char *)ptr+(N * sizeof(int)), sizeof(arref));
-  munmap(ptr,SIZE);
-  close(fd);
+  sem_wait(sem2);
 
+  int h = 1;
+  for(int i = 0; i < N; i++){
+    int digito_potencia;
+    if (memcpy(digito_potencia, (char *)ptr + h*sizeof(int), sizeof(digito_potencia) == NULL)){
+      perror("Error Memcpy");
+      return (-9);
+    }
+    h += 2;
+    if(i == atoi(argv[1]) - 1){
+      int testigo_p4 = -3;
+      //se manda por memoria compartida
+      //if((mkfifo(((char *)ptr + k*sizeof(int)),&testigo_p3,sizeof(int))) == NULL){
+      //  perror("Error Memcpy");
+       // return (-8);
+      //}
+                    
+    }
+    munmap(ptr,SIZE);
+    close(fd);     
+  }                 
 }

@@ -11,38 +11,35 @@
 
 int main(int argc, char *argv[]){
 
-  sem_unlink(sem1);
+  sem_unlink("/sem1");
   sem_t *sem1;
   sem1 = sem_open("/sem1",O_CREAT,0666,0);
-  if (sem1=="SEM_FAILED"){
+  if (sem1 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
   } 
-  sem_wait(sem1);
-  //aca aun esta bloqueado P3 toca ver en que momento se desbloquea
-  
-  
-  
-  
-  //buscar manera para que el tamaño sea el parametro N*2 convertido en bytes
-  int fd = open("/tmp/myfifo", O_WRONLY);
+
+  int fd = open("/tmp/myfifo", O_RDONLY);
+
   if((fd < 0)){
 
     perror("Error en open\n");
     return(-4);
-
   }
+
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
     perror("Error en write de N\n");
     return(-4);
 
-  }close(fd);
+  }
+  close(fd);
+
   //creacion de memoria compartida:
   const char NOMBRE[]= "/MEMP3";
-  const int SIZE = (N^2)*8;
+  const int SIZE = (2 * (N+2)) * sizeof(int);
   shm_unlink(NOMBRE);
-  int fd = shm_open(NOMBRE, O_CREAT | O_RDONLY, 0666);
+  int fd = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
   if (fd < 0) {
     perror("Error en shm_open");
     return(-1);
@@ -58,10 +55,31 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
-  int arref[N];
-  memcpy(arref,ptr,sizeof(arref));
-  munmap(ptr,SIZE);
-  close(fd);
-                                 
+  sem_wait(sem1);  
+  
+  //sem_wait(semH);
+
+  //aca se altenra la lectura de memoria compartida
+  int k = 0;
+  for(int i = 0; i < N; i++){
+    int digito_fibo;
+    if (memcpy(digito_fibo, (char *)ptr + k*sizeof(int), sizeof(digito_fibo) == NULL)){
+      perror("Error Memcpy");
+      return (-7);
+    }
+    k += 2;
+    if(i == atoi(argv[1]) - 1){
+      int testigo_p3 = -3;
+      //se manda por memoria compartida
+      //if((mkfifo(((char *)ptr + k*sizeof(int)),&testigo_p3,sizeof(int))) == NULL){
+      //  perror("Error Memcpy");
+       // return (-8);
+      //}
+                    
+    }
+    munmap(ptr,SIZE);
+    close(fd);     
+  }                          
+  
   
 }
