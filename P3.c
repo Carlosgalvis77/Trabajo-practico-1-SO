@@ -67,14 +67,25 @@ int main(int argc, char *argv[]){
       perror("Error Memcpy");
       return (-7);
     }
+    //semaforo
+    printf(digito_fibo);
     k += 2;
     if(i == atoi(argv[1]) - 1){
       int testigo_p3 = -3;
       //se manda por memoria compartida
-      //if((mkfifo(((char *)ptr + k*sizeof(int)),&testigo_p3,sizeof(int))) == NULL){
-      //  perror("Error Memcpy");
-       // return (-8);
-      //}
+      int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+
+      if((fd2 < 0)){
+        perror("Error en open\n");
+        return(-4);
+      }
+      if((write(fd2,&testigo_p3,sizeof(int)))<0){
+
+        perror("Error en write de N\n");
+        return(-4);
+
+      }
+      close(fd2);
                     
     }
     munmap(ptr,SIZE);

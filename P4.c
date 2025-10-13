@@ -31,13 +31,13 @@ int main(int argc, char *argv[]){
   
   const char NOMBRE []= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
-  int fd = shm_open(NOMBRE, O_RDONLY, 0666);
-  if (fd < 0) {
+  int fd1 = shm_open(NOMBRE, O_RDONLY, 0666);
+  if (fd1 < 0) {
     perror("Error en shm_open"); 
     return(-1);
   }
 
-  void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd1, 0);
   if (ptr == MAP_FAILED) {
     perror("Error MAP_FAILED");
     return (-3);
@@ -47,21 +47,32 @@ int main(int argc, char *argv[]){
   int h = 1;
   for(int i = 0; i < N; i++){
     int digito_potencia;
-    if (memcpy(digito_potencia, (char *)ptr + h*sizeof(int), sizeof(digito_potencia) == NULL)){
+    if (memcpy(&digito_potencia, (char *)ptr + h*sizeof(int), sizeof(digito_potencia) == NULL)){
       perror("Error Memcpy");
       return (-9);
     }
+    //semaforo
+    printf(digito_potencia);
     h += 2;
     if(i == atoi(argv[1]) - 1){
       int testigo_p4 = -3;
       //se manda por memoria compartida
-      //if((mkfifo(((char *)ptr + k*sizeof(int)),&testigo_p3,sizeof(int))) == NULL){
-      //  perror("Error Memcpy");
-       // return (-8);
-      //}
+      int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+
+      if((fd2 < 0)){
+        perror("Error en open\n");
+        return(-4);
+      }
+      if((write(fd2,&testigo_p4,sizeof(int)))<0){
+
+        perror("Error en write de N\n");
+        return(-4);
+
+      }
+      close(fd2);
                     
     }
     munmap(ptr,SIZE);
-    close(fd);     
+    close(fd1);     
   }                 
 }
