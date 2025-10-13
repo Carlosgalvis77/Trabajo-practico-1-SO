@@ -16,7 +16,9 @@ int main(int argc, char *argv[]){
   sem1 = sem_open("/sem1",O_CREAT,0666,0);
   if (sem1 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
-  } 
+  }  
+
+  sem_wait(sem1);
 
   int fd = open("/tmp/myfifo", O_RDONLY);
 

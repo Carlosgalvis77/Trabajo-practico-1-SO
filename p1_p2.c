@@ -58,7 +58,10 @@ int main(int argc, char *argv[]){
         return(-4);
 
     }
-  
+    
+    sem_post(sem1);
+    sem_post(sem2);
+
     close(fd);
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1) {

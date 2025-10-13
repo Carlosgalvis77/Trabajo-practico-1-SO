@@ -14,6 +14,8 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
   } 
 
+  sem_wait(sem2);
+
   int fd = open("/tmp/myfifo", O_WRONLY);
   if((fd < 0)){
 
@@ -28,6 +30,8 @@ int main(int argc, char *argv[]){
     return(-4);
 
   }close(fd);
+  
+  sem_wait(sem2);
   
   const char NOMBRE []= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
