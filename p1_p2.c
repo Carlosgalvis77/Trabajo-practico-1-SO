@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
         perror("Error en mkfifo\n");
         return(-4);
     }
-    int fd = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+    int fd = open("/tmp/myfifo", O_WRONLY);
     if(fd <  0){
 
         perror("Error en open\n");
@@ -58,14 +58,14 @@ int main(int argc, char *argv[]){
         return(-4);
 
     }
-
+    close(fd);
     unlink("/tmp/myfifo1");
     if((mkfifo("/tmp/myfifo1",0666))<0){
     
         perror("Error en mkfifo1\n");
         return(-4);
     }
-    int fdp4 = open("/tmp/myfifo1", O_WRONLY | O_CREAT);
+    int fdp4 = open("/tmp/myfifo1", O_WRONLY);
     if(fdp4 <  0){
 
         perror("Error en open\n");
@@ -98,13 +98,13 @@ int main(int argc, char *argv[]){
             // Aca se crea el bufer y se agrega b
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
-            int fd = shm_open(NOMBRE, O_RDWR, 0666);
-            if (fd < 0) {
+            int fdp = shm_open(NOMBRE, O_RDWR, 0666);
+            if (fdp < 0) {
                 perror("Error en shm_open"); 
                 return(-1);
             }
 
-            void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+            void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fdp, 0);
             if (ptr == MAP_FAILED) {
                 perror("Error MAP_FAILED");
                 return (-3);
@@ -139,17 +139,17 @@ int main(int argc, char *argv[]){
                 //FIN DE PUNTO CRITICO
             }
             munmap(ptr,SIZE);
-            close(fd);    
+            close(fdp);    
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
-            int fd = shm_open(NOMBRE, O_RDWR, 0666);
-            if (fd < 0) {
+            int fdh = shm_open(NOMBRE, O_RDWR, 0666);
+            if (fdh < 0) {
                 perror("Error en shm_open"); 
                 return(-1);
             }
 
-            void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+            void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fdh, 0);
             if (ptr == MAP_FAILED) {
                 perror("Error MAP_FAILED");
                 return (-3);
@@ -166,6 +166,7 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
+                printf("copiando exp\n");
                 l += 2;
                 if(i == N - 1){
                     int testigo_p2 = -2;
@@ -173,13 +174,14 @@ int main(int argc, char *argv[]){
                         perror("Error Memcpy");
                         return (-6);
                     }
+                    printf("despertando a P4\n");
                     sem_post(sem2);
                 }
                 sem_post(semP);
                 //FIN DE PUNTO CRITICO
             }
             munmap(ptr,SIZE);
-            close(fd);
+            close(fdh);
         }else{
             perror("Fallo al crear P1\n");
         }

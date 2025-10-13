@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[]){
 
-  sem_unlink("/sem1");
+
   sem_t *sem1;
   sem1 = sem_open("/sem1",O_CREAT,0666,0);
   if (sem1 == SEM_FAILED){
