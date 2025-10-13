@@ -58,9 +58,9 @@ int main(int argc, char *argv[]){
         return(-4);
 
     }
-    printf("se envio N a P3 y P4, despertando a p3 y p4\n");
-    sem_post(sem1);
-    sem_post(sem2);
+
+    sem_wait(sem2);
+    printf("se envio N a P3 y P4\n");
 
     close(fd);
     int v1, v2;
@@ -70,9 +70,8 @@ int main(int argc, char *argv[]){
     }
 
     if (v1 == 0 && v2 ==0){
-
         pid_t P2=fork();
-
+        printf("Creando P2 desde P1\n");
         if(P2>0){
 
             int a = atoi(argv[2]);
@@ -93,6 +92,7 @@ int main(int argc, char *argv[]){
                 return (-3);
             }
             int j = 0;
+            printf("empezando a crear fibo\n");
             for(int i = 0;i < atoi(argv[1]); i++){
 
                 //PUNTO CRITICO
@@ -106,11 +106,13 @@ int main(int argc, char *argv[]){
                 }
                 j += 2;
                 if(i == atoi(argv[1]) - 1){
+                    printf("mandando testigo al buffer\n");
                     int testigo_p1 = -1;
                     if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
                         perror("Error Memcpy");
                         return (-6);
                     }
+                    printf("despertando a P3\n");
                     sem_post(sem1);
                 }
                 sem_post(semH);

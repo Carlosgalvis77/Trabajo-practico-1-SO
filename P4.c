@@ -33,6 +33,7 @@ int main(int argc, char *argv[]){
   }close(fd);
 
   printf("Recibi N ahora me duermo \n");
+  sem_post(sem2);
   sem_wait(sem2);
 
   printf("P1 me desperto\n");
