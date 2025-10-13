@@ -119,49 +119,46 @@ int main(int argc, char *argv[]){
             munmap(ptr,SIZE);
             close(fd);
             }    
-        }else{
-            if(P2==0){
-
-                const char NOMBRE [] = "/MEMP3";
-                const int SIZE = (2 * (N+2)) * sizeof(int);
-                int fd = shm_open(NOMBRE, O_RDWR, 0666);
-                if (fd < 0) {
-                    perror("Error en shm_open"); 
-                    return(-1);
-                }
-
-                void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-                if (ptr == MAP_FAILED) {
-                    perror("Error MAP_FAILED");
-                    return (-3);
-                }
-                int l = 1;
-                int z = atoi(argv[4]);
-                for(int i= 0; i < atoi(argv[1]);i++){
-                    //PUNTO CRITICO
-                    sem_wait(semH);
-                    int potencia_de_dos = pow(2,z);
-                    z += 1;
-                    //aca se agrega el dato al buffer 2
-                    if((memcpy(((char *)ptr + l*sizeof(int)),&potencia_de_dos,sizeof(int))) == NULL){
-                        perror("Error Memcpy");
-                        return (-5);
-                    }
-                    l += 2;
-                    if(i == atoi(argv[1]) - 1){
-                        int testigo_p2 = -2;
-                        if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
-                            perror("Error Memcpy");
-                            return (-6);
-                        }
-                        sem_post(sem1);
-                    }
-                    sem_post(semP);
-                    //FIN DE PUNTO CRITICO
-                }
-                munmap(ptr,SIZE);
-                close(fd);
+        }else if(P2==0){
+            const char NOMBRE [] = "/MEMP3";
+            const int SIZE = (2 * (N+2)) * sizeof(int);
+            int fd = shm_open(NOMBRE, O_RDWR, 0666);
+            if (fd < 0) {
+                perror("Error en shm_open"); 
+                return(-1);
             }
+
+            void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+            if (ptr == MAP_FAILED) {
+                perror("Error MAP_FAILED");
+                return (-3);
+            }
+            int l = 1;
+            int z = atoi(argv[4]);
+            for(int i= 0; i < atoi(argv[1]);i++){
+                //PUNTO CRITICO
+                sem_wait(semH);
+                int potencia_de_dos = pow(2,z);
+                z += 1;
+                //aca se agrega el dato al buffer 2
+                if((memcpy(((char *)ptr + l*sizeof(int)),&potencia_de_dos,sizeof(int))) == NULL){
+                    perror("Error Memcpy");
+                    return (-5);
+                }
+                l += 2;
+                if(i == atoi(argv[1]) - 1){
+                    int testigo_p2 = -2;
+                    if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
+                        perror("Error Memcpy");
+                        return (-6);
+                    }
+                    sem_post(sem1);
+                }
+                sem_post(semP);
+                //FIN DE PUNTO CRITICO
+            }
+            munmap(ptr,SIZE);
+            close(fd);
         }else{
             perror("Fallo al crear P1\n");
         }
