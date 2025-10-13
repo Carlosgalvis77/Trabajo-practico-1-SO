@@ -39,18 +39,18 @@ int main(int argc, char *argv[]){
   const char NOMBRE[]= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
   shm_unlink(NOMBRE);
-  int fd = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
-  if (fd < 0) {
+  int fd1 = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
+  if (fd1 < 0) {
     perror("Error en shm_open");
     return(-1);
   }
 
-  if(ftruncate(fd, SIZE) < 0){
+  if(ftruncate(fd1, SIZE) < 0){
     perror("Error en ftruncate()\n");
     return (-2);
   }
 
-  void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd1, 0);
   if (ptr == MAP_FAILED) {
     perror("Error MAP_FAILED");
     return (-3);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
   int k = 0;
   for(int i = 0; i < N; i++){
     int digito_fibo;
-    if (memcpy(digito_fibo, (char *)ptr + k*sizeof(int), sizeof(digito_fibo) == NULL)){
+    if (memcpy(&digito_fibo, (char *)ptr + k*sizeof(int), sizeof(digito_fibo)) == NULL){
       perror("Error Memcpy");
       return (-7);
     }
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
                     
     }
     munmap(ptr,SIZE);
-    close(fd);     
+    close(fd1);     
   }                          
   
   
