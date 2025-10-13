@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
         return -2;
     }
     printf("p1 trabajando\n");
-  //Mkfifo para mandar el N a P3 para crear la memoria compartida
+    //Mkfifo para mandar el N a P3 para crear la memoria compartida
     unlink("/tmp/myfifo");
     if((mkfifo("/tmp/myfifo",0666))<0){
     
