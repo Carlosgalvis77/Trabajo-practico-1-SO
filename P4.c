@@ -15,7 +15,6 @@ int main(int argc, char *argv[]){
   if (sem2== SEM_FAILED ){
     perror("Ya esta creado el semaforo\n");
   } 
-  printf("P4 se ejecuta y ahora espera a p1_p2\n");
 
   int fd = open("/tmp/myfifo1", O_RDONLY);
   if((fd < 0)){
@@ -32,7 +31,6 @@ int main(int argc, char *argv[]){
 
   }close(fd);
 
-  printf("Recibi N ahora me duermo \n");
   sem_wait(sem2);
 
   printf("P1 me desperto\n");

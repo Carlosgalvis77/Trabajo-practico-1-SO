@@ -18,7 +18,6 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
   }  
 
-  printf("P3 se ejecuta y ahora espera a p1_p2\n");
 
   int fd = open("/tmp/myfifo", O_RDONLY);
 
@@ -57,7 +56,6 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
-  printf("CRee la memoria y recibi N ahora duermo \n");
   sem_wait(sem1);
   printf("P1 me desperto\n");
   

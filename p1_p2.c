@@ -80,8 +80,6 @@ int main(int argc, char *argv[]){
 
     }
 
-    printf("se envio N a P3 y P4\n");
-
     close(fdp4);
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1 || sem_getvalue(sem2, &v2) == -1) {
@@ -90,10 +88,10 @@ int main(int argc, char *argv[]){
     }
 
     if (v1 == 0 && v2 ==0){
-        pid_t P2=fork();
         printf("Creando P2 desde P1\n");
+        pid_t P2=fork();
         if(P2>0){
-
+            printf("ejecutando papa\n");
             int a = atoi(argv[2]);
             int b = atoi(argv[3]);
 
@@ -113,7 +111,7 @@ int main(int argc, char *argv[]){
             }
             int j = 0;
             printf("empezando a crear fibo\n");
-            for(int i = 0;i < atoi(argv[1]); i++){
+            for(int i = 0;i < N; i++){
 
                 //PUNTO CRITICO
                 sem_wait(semP);
@@ -124,8 +122,9 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
+                printf("copiando en el buffer fibo\n");
                 j += 2;
-                if(i == atoi(argv[1]) - 1){
+                if(i == N - 1){
                     printf("mandando testigo al buffer\n");
                     int testigo_p1 = -1;
                     if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
@@ -156,7 +155,7 @@ int main(int argc, char *argv[]){
             }
             int l = 1;
             int z = atoi(argv[4]);
-            for(int i= 0; i < atoi(argv[1]);i++){
+            for(int i= 0; i < N;i++){
                 //PUNTO CRITICO
                 sem_wait(semH);
                 int potencia_de_dos = pow(2,z);
@@ -167,13 +166,13 @@ int main(int argc, char *argv[]){
                     return (-5);
                 }
                 l += 2;
-                if(i == atoi(argv[1]) - 1){
+                if(i == N - 1){
                     int testigo_p2 = -2;
                     if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
                         perror("Error Memcpy");
                         return (-6);
                     }
-                    sem_post(sem1);
+                    sem_post(sem2);
                 }
                 sem_post(semP);
                 //FIN DE PUNTO CRITICO
