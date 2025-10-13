@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include <string.h>
 
 
 int main(int argc, char *argv[]){
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]){
   }close(fd);
   
   sem_wait(sem2);
-  
+
   const char NOMBRE []= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
   int fd1 = shm_open(NOMBRE, O_RDONLY, 0666);
@@ -51,14 +52,15 @@ int main(int argc, char *argv[]){
   int h = 1;
   for(int i = 0; i < N; i++){
     int digito_potencia;
-    if (memcpy(&digito_potencia, (char *)ptr + h*sizeof(int), sizeof(digito_potencia) == NULL)){
+    if (memcpy(&digito_potencia, (char *)ptr + h*sizeof(int), sizeof(digito_potencia)) == NULL){
       perror("Error Memcpy");
       return (-9);
     }
     //semaforo
-    printf(digito_potencia);
+    printf("%d\n", digito_potencia);
     h += 2;
-    if(i == atoi(argv[1]) - 1){
+    int n_testigo_p4 = atoi(argv[1]) - 1;
+    if(i == n_testigo_p4){
       int testigo_p4 = -3;
       //se manda por memoria compartida
       int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);

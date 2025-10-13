@@ -70,9 +70,10 @@ int main(int argc, char *argv[]){
       return (-7);
     }
     //semaforo
-    printf(digito_fibo);
+    printf("%d\n", digito_fibo);
     k += 2;
-    if(i == atoi(argv[1]) - 1){
+    int n_testigo_p3 = atoi(argv[1]) - 1;
+    if(i == n_testigo_p3){
       int testigo_p3 = -3;
       //se manda por memoria compartida
       int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
