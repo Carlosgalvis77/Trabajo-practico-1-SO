@@ -22,14 +22,14 @@ int main(int argc, char *argv[]){
         return -2;
     }
     
-    sem_unlink(semP);
+    //sem_unlink(semP);
     sem_t *semP = sem_open("/semP", O_CREAT, 0666, 1);
     if (semP == SEM_FAILED) {
         perror("sem_open P1");
         return -2;
     }
 
-    sem_unlink(semH);
+    //sem_unlink(semH);
     sem_t *semH = sem_open("/semH", O_CREAT, 0666, 0);
     if (semH == SEM_FAILED) {
         perror("sem_open P2");
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
     }
 
     int N = atoi(argv[1]);
-    if((write(fd,&n,sizeof(int)))<0){
+    if((write(fd,&N,sizeof(int)))<0){
 
         perror("Error en write de N\n");
         return(-4);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]){
     }
   
     close(fd);
-    if (int sem_getvalue(sem1)<=-1 && int sem_getvalue(sem2)<=-1 ){
+    if (sem_getvalue(sem1)<=-1 && sem_getvalue(sem2)<=-1 ){
     
         pid_t P2=fork();
 
