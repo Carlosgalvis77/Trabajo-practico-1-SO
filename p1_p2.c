@@ -23,14 +23,14 @@ int main(int argc, char *argv[]){
     }
     
     sem_unlink(semP);
-    sem_t *semP = sem_open("/semP", O_CREATE, 0666, 1);
+    sem_t *semP = sem_open("/semP", O_CREAT, 0666, 1);
     if (semP == SEM_FAILED) {
         perror("sem_open P1");
         return -2;
     }
 
     sem_unlink(semH);
-    sem_t *semH = sem_open("/semH", O_CREATE, 0666, 0);
+    sem_t *semH = sem_open("/semH", O_CREAT, 0666, 0);
     if (semH == SEM_FAILED) {
         perror("sem_open P2");
         return -2;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
         perror("Error en mkfifo\n");
         return(-4);
     }
-    int fd = open("/tmp/myfifo", O_WRONLY | O_CREAT)
+    int fd = open("/tmp/myfifo", O_WRONLY | O_CREAT);
     if(fd <  0){
 
         perror("Error en open\n");
@@ -51,7 +51,8 @@ int main(int argc, char *argv[]){
 
     }
 
-    if((write(fd,&(atoi(argv[1])),sizeof(int)))<0){
+    int N = atoi(argv[1]);
+    if((write(fd,&n,sizeof(int)))<0){
 
         perror("Error en write de N\n");
         return(-4);
@@ -59,7 +60,7 @@ int main(int argc, char *argv[]){
     }
   
     close(fd);
-    if((int sem_getvalue(sem1)<=-1) && (int sem_getvalue(sem2)<=-1 )){
+    if (int sem_getvalue(sem1)<=-1 && int sem_getvalue(sem2)<=-1 ){
     
         pid_t P2=fork();
 
@@ -70,6 +71,7 @@ int main(int argc, char *argv[]){
 
             // Aca se crea el bufer y se agrega b
             const char NOMBRE [] = "/MEMP3";
+            const int SIZE = pow(N, 2)*8;
             int fd = shm_open(NOMBRE, O_RDWR, 0666);
             if (fd < 0) {
                 perror("Error en shm_open"); 
@@ -82,7 +84,7 @@ int main(int argc, char *argv[]){
                 return (-3);
             }
             int j = 0;
-            for(i = 0;i < atoi(argv[1]); i++){
+            for(int i = 0;i < atoi(argv[1]); i++){
 
                 //PUNTO CRITICO
                 sem_wait(semP);
@@ -107,6 +109,7 @@ int main(int argc, char *argv[]){
         }else if(P2==0){
 
             const char NOMBRE [] = "/MEMP3";
+            const int SIZE = pow(N, 2)*8;
             int fd = shm_open(NOMBRE, O_RDWR, 0666);
             if (fd < 0) {
                 perror("Error en shm_open"); 
@@ -120,7 +123,7 @@ int main(int argc, char *argv[]){
             }
             int l = 1;
             int z = atoi(argv[4]);
-            for(i= 0; i < atoi(argv[1]);i++){
+            for(int i= 0; i < atoi(argv[1]);i++){
                 //PUNTO CRITICO
                 sem_wait(semH);
                 int potencia_de_dos = pow(2,z);
@@ -135,7 +138,7 @@ int main(int argc, char *argv[]){
                 //FIN DE PUNTO CRITICO
             }
             munmap(ptr,SIZE);
-            close(fd)
+            close(fd);
 
         }else{
             perror("Fallo al crear P1\n");
