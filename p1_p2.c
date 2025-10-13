@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
         perror("sem_open P2");
         return -2;
     }
-    print("p1 trabajando");
+    printf("p1 trabajando\n");
   //Mkfifo para mandar el N a P3 para crear la memoria compartida
     unlink("/tmp/myfifo");
     if((mkfifo("/tmp/myfifo",0666))<0){
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
         return(-4);
 
     }
-    print("se envio N a P3 y P4, despertando a p3 y p4");
+    printf("se envio N a P3 y P4, despertando a p3 y p4\n");
     sem_post(sem1);
     sem_post(sem2);
 

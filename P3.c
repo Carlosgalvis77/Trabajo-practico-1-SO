@@ -18,9 +18,9 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
   }  
 
-  print("P3 se ejecuta y ahora espera a p1_p2");
+  printf("P3 se ejecuta y ahora espera a p1_p2\n");
   sem_wait(sem1);
-  print("P1 me desperto");
+  printf("P1 me desperto\n");
   int fd = open("/tmp/myfifo", O_RDONLY);
 
   if((fd < 0)){
