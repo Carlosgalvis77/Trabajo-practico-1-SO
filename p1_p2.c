@@ -125,21 +125,21 @@ int main(int argc, char *argv[]){
                 }
                 printf("copiando en el buffer fibo\n");
                 j += 2;
-                if(i == N - 1){
-                    sem_wait(semP);
-                    printf("mandando testigo al buffer\n");
-                    int testigo_p1 = -1;
-                    if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
-                        perror("Error Memcpy");
-                        return (-6);
-                    }
-                    printf("despertando a P3\n");
-                    sem_post(semH);
-                    sem_post(sem1);
-                }
                 sem_post(semH);
                 //FIN DE PUNTO CRITICO
             }
+            sem_wait(semP);
+            printf("mandando testigo al buffer\n");
+            int testigo_p1 = -1;
+            if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
+                perror("Error Memcpy");
+                return (-6);
+            }
+            printf("despertando a P3\n");
+            sem_post(semH);
+            sem_post(sem1);
+
+
             munmap(ptr,SIZE);
             close(fdp);    
         }else if(P2==0){
@@ -170,20 +170,21 @@ int main(int argc, char *argv[]){
                 }
                 printf("copiando exp\n");
                 l += 2;
-                if(i == N - 1){
-                    sem_wait(semH);
-                    int testigo_p2 = -2;
-                    if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
-                        perror("Error Memcpy");
-                        return (-6);
-                    }
-                    printf("despertando a P4\n");
-                    sem_post(semP);
-                    sem_post(sem2);
-                }
                 sem_post(semP);
                 //FIN DE PUNTO CRITICO
             }
+            sem_wait(semH);
+            int testigo_p2 = -2;
+            if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
+                perror("Error Memcpy");
+                return (-6);
+            }
+            printf("Mandando testigo P2\n");
+            printf("despertando a P4\n");
+            sem_post(semP);
+            sem_post(sem2);
+
+
             munmap(ptr,SIZE);
             close(fdh);
         }else{
