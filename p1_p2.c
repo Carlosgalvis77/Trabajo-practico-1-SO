@@ -59,7 +59,28 @@ int main(int argc, char *argv[]){
 
     }
 
-    sem_wait(sem2);
+    unlink("/tmp/myfifo");
+    if((mkfifo("/tmp/myfifo",0666))<0){
+    
+        perror("Error en mkfifo\n");
+        return(-4);
+    }
+    int fd = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+    if(fd <  0){
+
+        perror("Error en open\n");
+        return(-4);
+
+    }
+    
+    int N = atoi(argv[1]);
+    if((write(fd,&N,sizeof(int)))<0){
+
+        perror("Error en write de N\n");
+        return(-4);
+
+    }
+
     printf("se envio N a P3 y P4\n");
 
     close(fd);
