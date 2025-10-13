@@ -115,8 +115,9 @@ int main(int argc, char *argv[]){
 
                 //PUNTO CRITICO
                 sem_wait(semP);
-                b = a + b;
+                int next = a + b;
                 a = b;
+                b = next;   
         
                 if((memcpy(((char *)ptr + j*sizeof(int)),&b,sizeof(int))) == NULL){
                     perror("Error Memcpy");
@@ -136,9 +137,9 @@ int main(int argc, char *argv[]){
                 }
                 sem_post(semH);
                 //FIN DE PUNTO CRITICO
+            }
             munmap(ptr,SIZE);
-            close(fd);
-            }    
+            close(fd);    
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
