@@ -19,8 +19,7 @@ int main(int argc, char *argv[]){
   }  
 
   printf("P3 se ejecuta y ahora espera a p1_p2\n");
-  sem_wait(sem1);
-  printf("P1 me desperto\n");
+
   int fd = open("/tmp/myfifo", O_RDONLY);
 
   if((fd < 0)){
@@ -58,7 +57,10 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
-  sem_wait(sem1);  
+  printf("CRee la memoria y recibi N ahora duermo \n");
+  sem_wait(sem1);
+  printf("P1 me desperto\n");
+  
   
   //sem_wait(semH);
 

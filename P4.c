@@ -16,9 +16,6 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
   } 
   printf("P4 se ejecuta y ahora espera a p1_p2\n");
-  sem_wait(sem2);
-
-  printf("P1 me desperto\n");
 
   int fd = open("/tmp/myfifo", O_WRONLY);
   if((fd < 0)){
@@ -34,8 +31,11 @@ int main(int argc, char *argv[]){
     return(-4);
 
   }close(fd);
-  
+
+  printf("Recibi N ahora me duermo \n");
   sem_wait(sem2);
+
+  printf("P1 me desperto\n");
 
   const char NOMBRE []= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
