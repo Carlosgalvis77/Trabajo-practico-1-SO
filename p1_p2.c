@@ -118,7 +118,7 @@ int main(int argc, char *argv[]){
                 //FIN DE PUNTO CRITICO
             munmap(ptr,SIZE);
             close(fd);
-                
+            }    
         }else{
             if(P2==0){
 
