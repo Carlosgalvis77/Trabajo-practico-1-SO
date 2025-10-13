@@ -65,16 +65,15 @@ int main(int argc, char *argv[]){
         perror("Error en mkfifo\n");
         return(-4);
     }
-    int fd = open("/tmp/myfifo", O_WRONLY | O_CREAT);
-    if(fd <  0){
+    int fdp4 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+    if(fdp4 <  0){
 
         perror("Error en open\n");
         return(-4);
 
     }
     
-    int N = atoi(argv[1]);
-    if((write(fd,&N,sizeof(int)))<0){
+    if((write(fdp4,&N,sizeof(int)))<0){
 
         perror("Error en write de N\n");
         return(-4);
@@ -83,7 +82,7 @@ int main(int argc, char *argv[]){
 
     printf("se envio N a P3 y P4\n");
 
-    close(fd);
+    close(fdp4);
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1 && sem_getvalue(sem2, &v2) == -1) {
         perror("P3 o P4 no se han ejecutado");
