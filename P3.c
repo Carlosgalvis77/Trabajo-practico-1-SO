@@ -32,6 +32,7 @@ int main(int argc, char *argv[]){
 
   }
 
+  printf("Esperando a P1");
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 

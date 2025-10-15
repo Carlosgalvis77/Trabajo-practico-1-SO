@@ -29,6 +29,7 @@ int main(int argc, char *argv[]){
 
   }
 
+  printf("Esperando a P1");
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]){
 
   const char NOMBRE []= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
-  int fd2 = shm_open(NOMBRE, O_RDONLY, 0666);
+  int fd2 = shm_open(NOMBRE, O_RDWR, 0666);
   if (fd2 < 0) {
     perror("Error en shm_open"); 
     return(-1);
