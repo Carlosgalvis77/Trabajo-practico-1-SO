@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
   if (semP4 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
   }
-  
+
   printf("Esperando a P1\n");
   unlink("/tmp/myfifo");
   if((mkfifo("/tmp/myfifo",0666))<0){
@@ -78,12 +78,7 @@ int main(int argc, char *argv[]){
   }
 
   sem_wait(sem1);
-  printf("P1 me desperto\n");
-  
-  
-  //sem_wait(semH);
 
-  //aca se altenra la lectura de memoria compartida
   int k = 0;
   for(int i = 0; i < N; i++){
     sem_wait(semP3);
@@ -100,7 +95,7 @@ int main(int argc, char *argv[]){
 
   sem_wait(semP3);
   int testigo_p3 = -3;
-  //se manda por memoria compartida
+
   int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
 
   if((fd2 < 0)){
@@ -113,11 +108,10 @@ int main(int argc, char *argv[]){
     perror("Error en write de N\n");
     return(-4);
   }
-
   sem_post(semP4);
-
   close(fd2);                    
   munmap(ptr,SIZE);
-  close(fd1);                             
+  close(fd1);  
+  printf("P3 termina\n");                         
   
 }

@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
         perror("sem_open P2");
         return -2;
     }
-    
+
     printf("p1 trabajando\n");
     //Mkfifo para mandar el N a P3 para crear la memoria compartida
     int fdp3 = open("/tmp/myfifo", O_WRONLY);
@@ -129,7 +129,23 @@ int main(int argc, char *argv[]){
             sem_post(semH);
 
             munmap(ptr,SIZE);
-            close(fdp);    
+            close(fdp);  
+            int fd = open("/tmp/myfifo", O_RDONLY);
+            if(fd <  0){
+
+                perror("Error en open\n");
+                return(-4);
+            }
+            int testigo_P1;
+            if((read(fd,&testigo_P1,sizeof(int)))<0){
+
+                perror("Error en read de N\n");
+                return(-4);
+            }else{
+                printf("P1 termina\n");
+                return(0);
+            }
+            close(fd);  
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
@@ -174,6 +190,21 @@ int main(int argc, char *argv[]){
             
             munmap(ptr,SIZE);
             close(fdh);
+            int fd = open("/tmp/myfifo1", O_RDONLY);
+            if(fd <  0){
+
+                perror("Error en open\n");
+                return(-4);
+            }
+            int testigo_P2;
+            if((read(fd,&testigo_P2,sizeof(int)))<0){
+
+                perror("Error en read de N\n");
+                return(-4);
+            }else{
+                printf("P2 termina\n");
+                return(0);
+            }
         }else{
             perror("Fallo al crear P1\n");
         }
