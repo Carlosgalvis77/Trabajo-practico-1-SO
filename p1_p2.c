@@ -126,6 +126,7 @@ int main(int argc, char *argv[]){
             munmap(ptr,SIZE);
             close(fdp);  
 
+            sem_wait(semP);
             int fd2 = open("/tmp/myfifo", O_RDONLY);
 
             if((fd2 < 0)){
@@ -137,9 +138,10 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de testigo3\n");
                 return(-14);
-            }else{
+            }else if(fd2 == -3){
                 printf("P1 terminan\n");
             } 
+            sem_post(semH);
             sem_close(sem1);
             sem_close(sem2);
             sem_close(semP);
@@ -186,6 +188,7 @@ int main(int argc, char *argv[]){
             
             munmap(ptr,SIZE);
             close(fdh);
+            sem_post(semH);
             int fd2 = open("/tmp/myfifo1", O_RDONLY);
 
             if((fd2 < 0)){
@@ -203,8 +206,9 @@ int main(int argc, char *argv[]){
             sem_close(semP);
             sem_close(semH);
             close(fd2);
+            sem_wait(semP);
             return -1;
-        }else{
+        }else if(fd2 == -3){
             perror("Fallo al crear P1\n");
         }
     }                               
