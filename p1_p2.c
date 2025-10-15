@@ -142,6 +142,7 @@ int main(int argc, char *argv[]){
                 printf("P1 terminan\n");
             } 
             sem_post(semH);
+
             sem_close(sem1);
             sem_close(sem2);
             sem_close(semP);
@@ -188,7 +189,8 @@ int main(int argc, char *argv[]){
             
             munmap(ptr,SIZE);
             close(fdh);
-            sem_post(semH);
+            
+            sem_wait(semH);
             int fd2 = open("/tmp/myfifo1", O_RDONLY);
 
             if((fd2 < 0)){
@@ -203,10 +205,11 @@ int main(int argc, char *argv[]){
             }else if(testigo_p4 == -3){
                 printf("P2 termina\n");
             } 
+            sem_post(semP);
+
             sem_close(semP);
             sem_close(semH);
             close(fd2);
-            sem_wait(semP);
             return -1;
         }else{
             perror("Fallo al crear P1\n");
