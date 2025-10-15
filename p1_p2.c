@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
     }
     if (v1 < 0 && v2 <0){
         printf("P3 o P4 no está disponible\n");
-
+    }
     if (v1 == 0 && v2 ==0){
         pid_t P2=fork();
         if(P2>0){
@@ -210,3 +210,4 @@ int main(int argc, char *argv[]){
     }                               
 
 }
+
