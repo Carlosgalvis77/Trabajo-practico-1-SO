@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
 
   sem_unlink("/semP3");
   sem_t *semP3;
-  semP3 = sem_open("/semP3",O_CREAT,0666,1);
+  semP3 = sem_open("/semP3",O_CREAT,0666,0);
   if (semP3 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
   }
@@ -30,12 +30,6 @@ int main(int argc, char *argv[]){
   semP4 = sem_open("/semP4",O_CREAT,0666,0);
   if (semP4 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
-  }
-
-  sem_t *sem2 = sem_open("/sem2", 0);
-  if (sem2 == SEM_FAILED) { 
-    perror("sem_open sem2 en P3");
-    return -1; 
   }
 
   printf("Esperando a P1\n");
@@ -84,8 +78,7 @@ int main(int argc, char *argv[]){
   }
 
   sem_wait(sem1);
-  sem_wait(sem2);     
-  sem_post(sem2);
+  sem_post(semP3);
 
   int k = 0;
   for(int i = 0; i < N; i++){
