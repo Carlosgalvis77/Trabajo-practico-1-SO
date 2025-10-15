@@ -68,6 +68,13 @@ int main(int argc, char *argv[]){
 
     }
     close(fdp4);
+    sem_t *semInit = sem_open("/semInit", 0);
+    if(semInit == SEM_FAILED){
+        printf("Error: P3 no ha creado la memoria compartida\n");
+        return -1;
+    }
+    sem_wait(semInit);
+    sem_close(semInit);
 
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1 || sem_getvalue(sem2, &v2) == -1) {

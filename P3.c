@@ -59,6 +59,11 @@ int main(int argc, char *argv[]){
   }
   close(fd);
 
+  sem_t *semInit = sem_open("/semInit", O_CREAT, 0666, 0);
+  if(semInit == SEM_FAILED){
+    printf("Error creando semáforo inicialización\n");
+    return -1;
+  }
   //creacion de memoria compartida:
   const char NOMBRE[]= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
@@ -79,6 +84,8 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-29);
   }
+  sem_post(semInit);
+  sem_close(semInit);
 
   sem_wait(sem1);
   
