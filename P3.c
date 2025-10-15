@@ -87,14 +87,10 @@ int main(int argc, char *argv[]){
   sem_post(semInit);
   sem_close(semInit);
 
-  sem_wait(sem1);
-  
-  
-  //sem_wait(semH);
-
   //aca se altenra la lectura de memoria compartida
   int k = 0;
   for(int i = 0; i < N; i++){
+    sem_wait(sem1);
     sem_wait(semP3);
     int digito_fibo;
     if (memcpy(&digito_fibo, (char *)ptr + k*sizeof(int), sizeof(int)) == NULL){
