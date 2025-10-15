@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
 
   sem_t *semP4 = sem_open("/semP4", 0); 
   if (semP4 == SEM_FAILED) {
-      perror("sem_open P3 en P4");
+      perror("sem_open P4 en P4");
       return -1;
   }
 

@@ -20,14 +20,14 @@ int main(int argc, char *argv[]){
 
   sem_unlink("/semP3");
   sem_t *semP3;
-  semP3 = sem_open("/sem1",O_CREAT,0666,1);
+  semP3 = sem_open("/semP3",O_CREAT,0666,1);
   if (semP3 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
   }
 
   sem_unlink("/semP4");
   sem_t *semP4;
-  semP4 = sem_open("/sem1",O_CREAT,0666,0);
+  semP4 = sem_open("/semP4",O_CREAT,0666,0);
   if (semP4 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
   }
