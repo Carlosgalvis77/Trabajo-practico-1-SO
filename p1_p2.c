@@ -202,8 +202,9 @@ int main(int argc, char *argv[]){
             } 
             sem_close(semP);
             sem_close(semH);
-            return -1;
             close(fd2);
+            shm_unlink("/MEMP3");
+            return -1;
         }else{
             perror("Fallo al crear P1\n");
         }

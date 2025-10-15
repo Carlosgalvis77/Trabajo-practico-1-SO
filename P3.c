@@ -122,7 +122,7 @@ int main(int argc, char *argv[]){
   munmap(ptr,SIZE);
   close(fd1);
   unlink("/tmp/myfifo");
-  shm_unlink("/MEMP3");
+  unlink("/tmp/myfifo1");
   sem_close(sem1);
   sem_close(semP3);
   sem_close(semP4);   
