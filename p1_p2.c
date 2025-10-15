@@ -37,37 +37,22 @@ int main(int argc, char *argv[]){
     }
     printf("p1 trabajando\n");
     //Mkfifo para mandar el N a P3 para crear la memoria compartida
-    unlink("/tmp/myfifo");
-    if((mkfifo("/tmp/myfifo",0666))<0){
-    
-        perror("Error en mkfifo\n");
-        return(-4);
-    }
-    int fd = open("/tmp/myfifo", O_WRONLY);
-    if(fd <  0){
+    int fdp3 = open("/tmp/myfifo", O_WRONLY);
+    if(fdp3 <  0){
 
         perror("Error en open\n");
         return(-4);
 
     }
-    
     int N = atoi(argv[1]);
-    sem_post(sem1);
-    sem_post(sem2);
-    
-    if((write(fd,&N,sizeof(int)))<0){
+    if((write(fdp3,&N,sizeof(int)))<0){
 
         perror("Error en write de N\n");
         return(-4);
 
     }
-    close(fd);
-    unlink("/tmp/myfifo1");
-    if((mkfifo("/tmp/myfifo1",0666))<0){
-    
-        perror("Error en mkfifo1\n");
-        return(-4);
-    }
+    close(fdp3);
+
     int fdp4 = open("/tmp/myfifo1", O_WRONLY);
     if(fdp4 <  0){
 
@@ -75,15 +60,14 @@ int main(int argc, char *argv[]){
         return(-4);
 
     }
-    
     if((write(fdp4,&N,sizeof(int)))<0){
 
         perror("Error en write de N\n");
         return(-4);
 
     }
-
     close(fdp4);
+
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1 || sem_getvalue(sem2, &v2) == -1) {
         perror("P3 o P4 no se han ejecutado");
@@ -139,9 +123,8 @@ int main(int argc, char *argv[]){
                 return (-6);
             }
             printf("despertando a P3\n");
-            sem_post(semH);
             sem_post(sem1);
-
+            sem_post(semH);
 
             munmap(ptr,SIZE);
             close(fdp);    
@@ -184,10 +167,9 @@ int main(int argc, char *argv[]){
             }
             printf("Mandando testigo P2\n");
             printf("despertando a P4\n");
-            sem_post(semP);
             sem_post(sem2);
-
-
+            sem_post(semP);
+            
             munmap(ptr,SIZE);
             close(fdh);
         }else{

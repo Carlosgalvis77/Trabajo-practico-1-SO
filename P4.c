@@ -15,23 +15,28 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
   } 
 
-  // se bloquea p4 apenas empieza
-  sem_wait(sem2);
-
+  unlink("/tmp/myfifo1");
+  if((mkfifo("/tmp/myfifo1",0666))<0){
+  
+    perror("Error en mkfifo1\n");
+    return(-4);
+  }
   int fd = open("/tmp/myfifo1", O_RDONLY);
-  if((fd < 0)){
+  if(fd <  0){
 
     perror("Error en open\n");
     return(-4);
 
   }
+
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
-    perror("Error en write de N\n");
+    perror("Error en read de N\n");
     return(-4);
 
-  }close(fd);
+  }
+  close(fd);
 
   sem_wait(sem2);
 
