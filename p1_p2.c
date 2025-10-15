@@ -16,6 +16,7 @@ int main(int argc, char *argv[]){
         perror("sem_open P3 en P1");
         return -1;
     }
+
     sem_t *sem2 = sem_open("/sem2", 0);
     if (sem2 == SEM_FAILED) {
         perror("sem_open P4 en P1");
@@ -35,6 +36,7 @@ int main(int argc, char *argv[]){
         perror("sem_open P2");
         return -2;
     }
+    
     printf("p1 trabajando\n");
     //Mkfifo para mandar el N a P3 para crear la memoria compartida
     int fdp3 = open("/tmp/myfifo", O_WRONLY);

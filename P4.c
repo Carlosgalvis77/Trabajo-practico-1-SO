@@ -15,12 +15,25 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
   } 
 
+  sem_t *semP3 = sem_open("/semP3", 0); 
+    if (semP3 == SEM_FAILED) {
+        perror("sem_open P3 en P4");
+        return -1;
+    }
+
+  sem_t *semP4 = sem_open("/semP4", 0); 
+  if (semP4 == SEM_FAILED) {
+      perror("sem_open P3 en P4");
+      return -1;
+  }
+
   unlink("/tmp/myfifo1");
   if((mkfifo("/tmp/myfifo1",0666))<0){
   
     perror("Error en mkfifo1\n");
     return(-4);
   }
+
   int fd = open("/tmp/myfifo1", O_RDONLY);
   if(fd <  0){
 
@@ -29,7 +42,7 @@ int main(int argc, char *argv[]){
 
   }
 
-  printf("Esperando a P1");
+  printf("Esperando a P1\n");
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
@@ -60,6 +73,7 @@ int main(int argc, char *argv[]){
 
   int h = 1;
   for(int i = 0; i < N; i++){
+    sem_wait(semP4);
     int digito_potencia;
     if (memcpy(&digito_potencia, (char *)ptr + h*sizeof(int), sizeof(int)) == NULL){
       perror("Error Memcpy");
@@ -67,27 +81,27 @@ int main(int argc, char *argv[]){
     }
     //semaforo
     printf("%d\n", digito_potencia);
-    h += 2;
-    int n_testigo_p4 = atoi(argv[1]) - 1;
-    if(i == n_testigo_p4){
-      int testigo_p4 = -3;
-      //se manda por memoria compartida
-      int fd3 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+    h += 2; 
+    sem_post(semP3); 
+  }        
+  
+  sem_wait(semP4);
+  int testigo_p4 = -3;
+  //se manda por memoria compartida
+  int fd3 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
 
-      if((fd3 < 0)){
-        perror("Error en open\n");
-        return(-4);
-      }
-      if((write(fd3,&testigo_p4,sizeof(int)))<0){
+  if((fd3 < 0)){
+    perror("Error en open\n");
+    return(-4);
+  }
+  if((write(fd3,&testigo_p4,sizeof(int)))<0){
 
-        perror("Error en write de N\n");
-        return(-4);
+    perror("Error en write de N\n");
+    return(-4);
 
-      }
-      close(fd3);
-                    
-    }
-    munmap(ptr,SIZE);
-    close(fd2);     
-  }                 
+  }
+  sem_post(semP3);
+  close(fd3); 
+  munmap(ptr,SIZE);
+  close(fd2);         
 }

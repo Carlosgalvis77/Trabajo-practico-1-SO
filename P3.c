@@ -11,12 +11,26 @@
 
 int main(int argc, char *argv[]){
 
-
+  sem_unlink("/sem1");
   sem_t *sem1;
   sem1 = sem_open("/sem1",O_CREAT,0666,0);
   if (sem1 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
   }  
+
+  sem_unlink("/semP3");
+  sem_t *semP3;
+  semP3 = sem_open("/sem1",O_CREAT,0666,1);
+  if (semP3 == SEM_FAILED){
+    perror("Ya esta creado el semaforo\n");
+  }
+
+  sem_unlink("/semP4");
+  sem_t *semP4;
+  semP4 = sem_open("/sem1",O_CREAT,0666,0);
+  if (semP4 == SEM_FAILED){
+    perror("Ya esta creado el semaforo\n");
+  }
 
   unlink("/tmp/myfifo");
   if((mkfifo("/tmp/myfifo",0666))<0){
@@ -32,7 +46,7 @@ int main(int argc, char *argv[]){
 
   }
 
-  printf("Esperando a P1");
+  printf("Esperando a P1\n");
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
@@ -62,6 +76,7 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
+
   sem_wait(sem1);
   printf("P1 me desperto\n");
   
@@ -71,16 +86,19 @@ int main(int argc, char *argv[]){
   //aca se altenra la lectura de memoria compartida
   int k = 0;
   for(int i = 0; i < N; i++){
+    sem_wait(semP3);
     int digito_fibo;
     if (memcpy(&digito_fibo, (char *)ptr + k*sizeof(int), sizeof(int)) == NULL){
       perror("Error Memcpy");
       return (-7);
     }
-    //semaforo
+   
     printf("%d\n", digito_fibo);
     k += 2;
-
+    sem_post(semP4);
   }
+
+  sem_wait(semP3);
   int testigo_p3 = -3;
   //se manda por memoria compartida
   int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
@@ -89,15 +107,16 @@ int main(int argc, char *argv[]){
     perror("Error en open\n");
     return(-4);
   }
+
   if((write(fd2,&testigo_p3,sizeof(int)))<0){
 
     perror("Error en write de N\n");
     return(-4);
-
   }
-  close(fd2);
-                    
-    
+
+  sem_post(semP4);
+
+  close(fd2);                    
   munmap(ptr,SIZE);
   close(fd1);                             
   
