@@ -208,7 +208,7 @@ int main(int argc, char *argv[]){
             close(fd2);
             sem_wait(semP);
             return -1;
-        }else if(fd2 == -3){
+        }else{
             perror("Fallo al crear P1\n");
         }
     }                               
