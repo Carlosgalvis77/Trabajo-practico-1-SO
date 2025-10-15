@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
       perror("sem_open P4 en P4");
       return -1;
   }
-
+  
   printf("Esperando a P1\n");
   unlink("/tmp/myfifo1");
   if((mkfifo("/tmp/myfifo1",0666))<0){
@@ -54,6 +54,8 @@ int main(int argc, char *argv[]){
 
   sem_wait(sem2);
 
+  printf("P1 me desperto\n");
+
   const char NOMBRE []= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
   int fd2 = shm_open(NOMBRE, O_RDWR, 0666);
@@ -67,6 +69,7 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
+  sem_wait(sem2);
 
   int h = 1;
   for(int i = 0; i < N; i++){
@@ -76,7 +79,7 @@ int main(int argc, char *argv[]){
       perror("Error Memcpy");
       return (-9);
     }
-
+    //semaforo
     printf("%d\n", digito_potencia);
     h += 2; 
     sem_post(semP3); 
@@ -84,8 +87,8 @@ int main(int argc, char *argv[]){
   
   sem_wait(semP4);
   int testigo_p4 = -3;
-
-  int fd3 = open("/tmp/myfifo1", O_WRONLY | O_CREAT);
+  //se manda por memoria compartida
+  int fd3 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
 
   if((fd3 < 0)){
     perror("Error en open\n");
@@ -100,6 +103,5 @@ int main(int argc, char *argv[]){
   sem_post(semP3);
   close(fd3); 
   munmap(ptr,SIZE);
-  close(fd2);   
-  printf("P4 termina\n");         
+  close(fd2);         
 }
