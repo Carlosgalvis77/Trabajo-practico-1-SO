@@ -71,7 +71,7 @@ int main(int argc, char *argv[]){
 
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1 || sem_getvalue(sem2, &v2) == -1) {
-        printf("P3 o P4 no se han ejecutado");
+        perror("P3 o P4 no se han ejecutado");
         return -1; 
     }
 
@@ -205,6 +205,9 @@ int main(int argc, char *argv[]){
         }else{
             perror("Fallo al crear P1\n");
         }
-    }                               
+    }else{
+        printf("P3 o P4 no se han ejecutado\n");
+        return(-1);
+    }
 
 }
