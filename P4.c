@@ -69,7 +69,6 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
-  sem_wait(sem2);
 
   int h = 1;
   for(int i = 0; i < N; i++){
