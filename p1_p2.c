@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
     int fdp3 = open("/tmp/myfifo", O_WRONLY);
     if(fdp3 <  0){
 
-        perror("P3 o P4 no estan en ejecución\n");
+        perror("Error en open\n");
         return(-5);
 
     }
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
     int fdp4 = open("/tmp/myfifo1", O_WRONLY);
     if(fdp4 <  0){
 
-        perror("P3 o P4 no estan en ejecución\n");
+        perror("Error en open\n");
         return(-7);
 
     }
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
     }
     if (v1 < 0 && v2 <0){
         printf("P3 o P4 no está disponible\n");
-    }
+
     if (v1 == 0 && v2 ==0){
         pid_t P2=fork();
         if(P2>0){
@@ -126,7 +126,6 @@ int main(int argc, char *argv[]){
             munmap(ptr,SIZE);
             close(fdp);  
 
-            sem_wait(semP);
             int fd2 = open("/tmp/myfifo", O_RDONLY);
 
             if((fd2 < 0)){
@@ -138,11 +137,9 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de testigo3\n");
                 return(-14);
-            }else if(testigo_p3 == -3){
+            }else{
                 printf("P1 terminan\n");
             } 
-            sem_post(semH);
-
             sem_close(sem1);
             sem_close(sem2);
             sem_close(semP);
@@ -151,7 +148,7 @@ int main(int argc, char *argv[]){
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
-            int fdh = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
+            int fdh = shm_open(NOMBRE, O_RDWR, 0666);
             if (fdh < 0) {
                 perror("Error en shm_open"); 
                 return(-15);
@@ -189,9 +186,6 @@ int main(int argc, char *argv[]){
             
             munmap(ptr,SIZE);
             close(fdh);
-
-            sem_wait(semH);
-
             int fd2 = open("/tmp/myfifo1", O_RDONLY);
 
             if((fd2 < 0)){
@@ -203,20 +197,16 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de testigo4\n");
                 return(-20);
-            }else if(testigo_p4 == -3){
+            }else{
                 printf("P2 termina\n");
             } 
-            
-            sem_post(semP);
-
             sem_close(semP);
             sem_close(semH);
-            close(fd2);
             return -1;
+            close(fd2);
         }else{
             perror("Fallo al crear P1\n");
         }
     }                               
 
 }
-
