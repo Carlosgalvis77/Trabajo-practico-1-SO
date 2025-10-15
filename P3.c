@@ -18,7 +18,8 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
   }  
 
-
+  // se bloquea p3 apenas empieza
+  sem_wait(sem1);
   int fd = open("/tmp/myfifo", O_RDONLY);
 
   if((fd < 0)){

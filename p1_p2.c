@@ -52,6 +52,9 @@ int main(int argc, char *argv[]){
     }
     
     int N = atoi(argv[1]);
+    sem_post(sem1);
+    sem_post(sem2);
+    
     if((write(fd,&N,sizeof(int)))<0){
 
         perror("Error en write de N\n");
