@@ -117,7 +117,8 @@ int main(int argc, char *argv[]){
 
   close(fd2);                    
   munmap(ptr,SIZE);
-  close(fd1);                             
+  close(fd1);        
+  printf("P3 termina\n");                        
   
 }
 

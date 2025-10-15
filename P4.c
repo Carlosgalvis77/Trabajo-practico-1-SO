@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
   sem_wait(semP4);
   int testigo_p4 = -3;
   //se manda por memoria compartida
-  int fd3 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
+  int fd3 = open("/tmp/myfifo1", O_WRONLY | O_CREAT);
 
   if((fd3 < 0)){
     perror("Error en open\n");
@@ -100,5 +100,6 @@ int main(int argc, char *argv[]){
   sem_post(semP3);
   close(fd3); 
   munmap(ptr,SIZE);
-  close(fd2);         
+  close(fd2);    
+  printf("P4 termina\n");        
 }
