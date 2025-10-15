@@ -31,7 +31,8 @@ int main(int argc, char *argv[]){
   if (semP4 == SEM_FAILED){
     perror("Ya esta creado el semaforo\n");
   }
-
+  
+  printf("Esperando a P1\n");
   unlink("/tmp/myfifo");
   if((mkfifo("/tmp/myfifo",0666))<0){
   
@@ -46,7 +47,6 @@ int main(int argc, char *argv[]){
 
   }
 
-  printf("Esperando a P1\n");
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
