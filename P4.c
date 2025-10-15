@@ -102,9 +102,9 @@ int main(int argc, char *argv[]){
   close(fd3); 
   munmap(ptr,SIZE);
   close(fd2); 
-  sem_close("/sem2");
-  sem_close("/semP3");
-  sem_close("/semP4");
+  sem_close(sem2);
+  sem_close(semP3);
+  sem_close(semP4);
   unlink("/tmp/myfifo1");   
   printf("P4 termina\n");        
 }

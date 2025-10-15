@@ -123,9 +123,9 @@ int main(int argc, char *argv[]){
   close(fd1);
   unlink("/tmp/myfifo");
   shm_unlink("/MEMP3");
-  sem_close("/sem1");
-  sem_close("/semP3");
-  sem_close("/semP4");   
+  sem_close(sem1);
+  sem_close(semP3);
+  sem_close(semP4);   
   printf("P3 termina\n");                        
   
 }

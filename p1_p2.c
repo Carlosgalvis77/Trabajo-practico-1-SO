@@ -140,10 +140,10 @@ int main(int argc, char *argv[]){
             }else{
                 printf("P1 terminan\n");
             } 
-            sem_close("/sem1");
-            sem_close("/sem2");
-            sem_close("/semP");
-            sem_close("/semH");
+            sem_close(sem1);
+            sem_close(sem2);
+            sem_close(semP);
+            sem_close(semH);
             close(fd2);  
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
@@ -200,8 +200,8 @@ int main(int argc, char *argv[]){
             }else{
                 printf("P2 termina\n");
             } 
-            sem_close("/semP");
-            sem_close("/semH");
+            sem_close(semP);
+            sem_close(semH);
             return -1;
             close(fd2);
         }else{
