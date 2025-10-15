@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
       perror("sem_open P4 en P4");
       return -1;
   }
-  
+
   printf("Esperando a P1\n");
   unlink("/tmp/myfifo1");
   if((mkfifo("/tmp/myfifo1",0666))<0){
@@ -69,7 +69,6 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-3);
   }
-  sem_wait(sem2);
 
   int h = 1;
   for(int i = 0; i < N; i++){
