@@ -76,8 +76,10 @@ int main(int argc, char *argv[]){
     }
 
     if (v1 == 0 && v2 ==0){
+
         pid_t P2=fork();
         if(P2>0){
+
             int a = atoi(argv[2]);
             int b = atoi(argv[3]);
 
@@ -96,6 +98,7 @@ int main(int argc, char *argv[]){
                 return (-3);
             }
             int j = 0;
+
             for(int i = 0;i < N; i++){
 
                 //PUNTO CRITICO
@@ -108,7 +111,7 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
-                printf("copiando en el buffer fibo\n");
+
                 j += 2;
                 sem_post(semH);
                 //FIN DE PUNTO CRITICO
@@ -120,9 +123,8 @@ int main(int argc, char *argv[]){
                 perror("Error Memcpy");
                 return (-6);
             }
-            printf("despertando a P3\n");
-            sem_post(sem1);
             sem_post(semH);
+            sem_post(sem1);
 
             munmap(ptr,SIZE);
             close(fdp);  
@@ -141,8 +143,9 @@ int main(int argc, char *argv[]){
                 sem_wait(semP);
                 printf("P1 termina\n");
                 sem_post(semH);
-                return(0);
+                
             }
+            return(0);
             close(fd);  
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
@@ -180,6 +183,7 @@ int main(int argc, char *argv[]){
                 perror("Error Memcpy");
                 return (-6);
             }
+
             sem_post(sem2);
             sem_post(semP);
             
@@ -196,18 +200,18 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de N\n");
                 return(-4);
-            }else{ 
+            }else{
                 sem_wait(semP);
                 printf("P2 termina\n");
                 sem_post(semH);
-                return(0);
             }
+            return(0);
         }else{
             perror("Fallo al crear P1\n");
         }
     }else{
-        printf("P3 o P4 no se han ejecutado\n");
-        return(-1);
-    }
+
+        printf("P3 o P4 no estan en ejecucion");
+    }                            
 
 }
