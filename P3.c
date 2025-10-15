@@ -62,7 +62,6 @@ int main(int argc, char *argv[]){
   //creacion de memoria compartida:
   const char NOMBRE[]= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
-  shm_unlink(NOMBRE);
   int fd1 = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
   if (fd1 < 0) {
     perror("Error en shm_open");
@@ -123,6 +122,7 @@ int main(int argc, char *argv[]){
   close(fd1);
   unlink("/tmp/myfifo");
   unlink("/tmp/myfifo1");
+  shm_unlink("/MEMP3");
   sem_close(sem1);
   sem_close(semP3);
   sem_close(semP4);   

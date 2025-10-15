@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
     int fdp3 = open("/tmp/myfifo", O_WRONLY);
     if(fdp3 <  0){
 
-        perror("Error en open\n");
+        perror("P3 o P4 no estan en ejecución\n");
         return(-5);
 
     }
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
     int fdp4 = open("/tmp/myfifo1", O_WRONLY);
     if(fdp4 <  0){
 
-        perror("Error en open\n");
+        perror("P3 o P4 no estan en ejecución\n");
         return(-7);
 
     }
@@ -203,7 +203,6 @@ int main(int argc, char *argv[]){
             sem_close(semP);
             sem_close(semH);
             close(fd2);
-            shm_unlink("/MEMP3");
             return -1;
         }else{
             perror("Fallo al crear P1\n");
