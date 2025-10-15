@@ -27,14 +27,14 @@ int main(int argc, char *argv[]){
     sem_t *semP = sem_open("/semP", O_CREAT, 0666, 1);
     if (semP == SEM_FAILED) {
         perror("sem_open P1");
-        return -2;
+        return -3;
     }
 
     sem_unlink("/semH");
     sem_t *semH = sem_open("/semH", O_CREAT, 0666, 0);
     if (semH == SEM_FAILED) {
         perror("sem_open P2");
-        return -2;
+        return -4;
     }
     
     //Mkfifo para mandar el N a P3 para crear la memoria compartida
@@ -42,14 +42,14 @@ int main(int argc, char *argv[]){
     if(fdp3 <  0){
 
         perror("Error en open\n");
-        return(-4);
+        return(-5);
 
     }
     int N = atoi(argv[1]);
     if((write(fdp3,&N,sizeof(int)))<0){
 
         perror("Error en write de N\n");
-        return(-4);
+        return(-6);
 
     }
     close(fdp3);
@@ -58,22 +58,24 @@ int main(int argc, char *argv[]){
     if(fdp4 <  0){
 
         perror("Error en open\n");
-        return(-4);
+        return(-7);
 
     }
     if((write(fdp4,&N,sizeof(int)))<0){
 
         perror("Error en write de N\n");
-        return(-4);
+        return(-8);
 
     }
     close(fdp4);
 
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1 || sem_getvalue(sem2, &v2) == -1) {
-        perror("P3 o P4 no se han ejecutado");
-        return -1; 
+        perror("Error en sem_getvalue");
+        return -9; 
     }
+    if (v1 < 0 && v2 <0){
+        printf("P3 o P4 no está disponible\n");
 
     if (v1 == 0 && v2 ==0){
         pid_t P2=fork();
@@ -87,13 +89,13 @@ int main(int argc, char *argv[]){
             int fdp = shm_open(NOMBRE, O_RDWR, 0666);
             if (fdp < 0) {
                 perror("Error en shm_open"); 
-                return(-1);
+                return(-10);
             }
 
             void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fdp, 0);
             if (ptr == MAP_FAILED) {
                 perror("Error MAP_FAILED");
-                return (-3);
+                return (-11);
             }
             int j = 0;
             for(int i = 0;i < N; i++){
@@ -106,7 +108,7 @@ int main(int argc, char *argv[]){
         
                 if((memcpy(((char *)ptr + j*sizeof(int)),&b,sizeof(int))) == NULL){
                     perror("Error Memcpy");
-                    return (-5);
+                    return (-12);
                 }
                 j += 2;
                 sem_post(semH);
@@ -123,21 +125,25 @@ int main(int argc, char *argv[]){
 
             munmap(ptr,SIZE);
             close(fdp);  
-            
+
             int fd2 = open("/tmp/myfifo", O_RDONLY);
 
             if((fd2 < 0)){
                 perror("Error en open\n");
-                return(-4);
+                return(-13);
             }
             int testigo_p3;
             if((read(fd2,&testigo_p3,sizeof(int)))<0){
 
                 perror("Error en read de testigo3\n");
-                return(-4);
+                return(-14);
             }else{
                 printf("P1 terminan\n");
             } 
+            sem_close("/sem1");
+            sem_close("/sem2");
+            sem_close("/semP");
+            sem_close("/semH");
             close(fd2);  
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
@@ -145,13 +151,13 @@ int main(int argc, char *argv[]){
             int fdh = shm_open(NOMBRE, O_RDWR, 0666);
             if (fdh < 0) {
                 perror("Error en shm_open"); 
-                return(-1);
+                return(-15);
             }
 
             void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fdh, 0);
             if (ptr == MAP_FAILED) {
                 perror("Error MAP_FAILED");
-                return (-3);
+                return (-16);
             }
             int l = 1;
             int z = atoi(argv[4]);
@@ -163,7 +169,7 @@ int main(int argc, char *argv[]){
                 //aca se agrega el dato al buffer 2
                 if((memcpy(((char *)ptr + l*sizeof(int)),&potencia_de_dos,sizeof(int))) == NULL){
                     perror("Error Memcpy");
-                    return (-5);
+                    return (-17);
                 }
                 l += 2;
                 sem_post(semP);
@@ -173,7 +179,7 @@ int main(int argc, char *argv[]){
             int testigo_p2 = -2;
             if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
                 perror("Error Memcpy");
-                return (-6);
+                return (-18);
             }
             sem_post(sem2);
             sem_post(semP);
@@ -184,16 +190,18 @@ int main(int argc, char *argv[]){
 
             if((fd2 < 0)){
                 perror("Error en open\n");
-                return(-4);
+                return(-19);
             }
             int testigo_p4;
             if((read(fd2,&testigo_p4,sizeof(int)))<0){
 
                 perror("Error en read de testigo4\n");
-                return(-4);
+                return(-20);
             }else{
                 printf("P2 termina\n");
             } 
+            sem_close("/semP");
+            sem_close("/semH");
             return -1;
             close(fd2);
         }else{

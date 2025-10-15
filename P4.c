@@ -13,18 +13,19 @@ int main(int argc, char *argv[]){
   sem2 = sem_open("/sem2",O_CREAT,0666,0);
   if (sem2== SEM_FAILED ){
     perror("Ya esta creado el semaforo\n");
+    return -33;
   } 
 
   sem_t *semP3 = sem_open("/semP3", 0); 
     if (semP3 == SEM_FAILED) {
         perror("sem_open P3 en P4");
-        return -1;
+        return -34;
     }
 
   sem_t *semP4 = sem_open("/semP4", 0); 
   if (semP4 == SEM_FAILED) {
       perror("sem_open P4 en P4");
-      return -1;
+      return -35;
   }
   
   printf("Esperando a P1\n");
@@ -32,14 +33,14 @@ int main(int argc, char *argv[]){
   if((mkfifo("/tmp/myfifo1",0666))<0){
   
     perror("Error en mkfifo1\n");
-    return(-4);
+    return(-36);
   }
 
   int fd = open("/tmp/myfifo1", O_RDONLY);
   if(fd <  0){
 
     perror("Error en open\n");
-    return(-4);
+    return(-37);
 
   }
 
@@ -47,7 +48,7 @@ int main(int argc, char *argv[]){
   if((read(fd,&N,sizeof(int)))<0){
 
     perror("Error en read de N\n");
-    return(-4);
+    return(-38);
 
   }
   close(fd);
@@ -59,13 +60,13 @@ int main(int argc, char *argv[]){
   int fd2 = shm_open(NOMBRE, O_RDWR, 0666);
   if (fd2 < 0) {
     perror("Error en shm_open"); 
-    return(-1);
+    return(-39);
   }
 
   void *ptr = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0);
   if (ptr == MAP_FAILED) {
     perror("Error MAP_FAILED");
-    return (-3);
+    return (-40);
   }
 
   int h = 1;
@@ -74,7 +75,7 @@ int main(int argc, char *argv[]){
     int digito_potencia;
     if (memcpy(&digito_potencia, (char *)ptr + h*sizeof(int), sizeof(int)) == NULL){
       perror("Error Memcpy");
-      return (-9);
+      return (-41);
     }
     //semaforo
     printf("%d\n", digito_potencia);
@@ -89,17 +90,21 @@ int main(int argc, char *argv[]){
 
   if((fd3 < 0)){
     perror("Error en open\n");
-    return(-4);
+    return(-42);
   }
   if((write(fd3,&testigo_p4,sizeof(int)))<0){
 
     perror("Error en write de N\n");
-    return(-4);
+    return(-43);
 
   }
   sem_post(semP3);
   close(fd3); 
   munmap(ptr,SIZE);
-  close(fd2);    
+  close(fd2); 
+  sem_close("/sem2");
+  sem_close("/semP3");
+  sem_close("/semP4");
+  unlink("/tmp/myfifo1");   
   printf("P4 termina\n");        
 }
