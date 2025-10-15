@@ -37,7 +37,6 @@ int main(int argc, char *argv[]){
         return -2;
     }
     
-    printf("p1 trabajando\n");
     //Mkfifo para mandar el N a P3 para crear la memoria compartida
     int fdp3 = open("/tmp/myfifo", O_WRONLY);
     if(fdp3 <  0){
@@ -77,10 +76,8 @@ int main(int argc, char *argv[]){
     }
 
     if (v1 == 0 && v2 ==0){
-        printf("Creando P2 desde P1\n");
         pid_t P2=fork();
         if(P2>0){
-            printf("ejecutando papa\n");
             int a = atoi(argv[2]);
             int b = atoi(argv[3]);
 
@@ -99,7 +96,6 @@ int main(int argc, char *argv[]){
                 return (-3);
             }
             int j = 0;
-            printf("empezando a crear fibo\n");
             for(int i = 0;i < N; i++){
 
                 //PUNTO CRITICO
@@ -112,19 +108,16 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
-                printf("copiando en el buffer fibo\n");
                 j += 2;
                 sem_post(semH);
                 //FIN DE PUNTO CRITICO
             }
             sem_wait(semP);
-            printf("mandando testigo al buffer\n");
             int testigo_p1 = -1;
             if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
                 perror("Error Memcpy");
                 return (-6);
             }
-            printf("despertando a P3\n");
             sem_post(sem1);
             sem_post(semH);
 
@@ -156,7 +149,6 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
-                printf("copiando exp\n");
                 l += 2;
                 sem_post(semP);
                 //FIN DE PUNTO CRITICO
@@ -167,8 +159,6 @@ int main(int argc, char *argv[]){
                 perror("Error Memcpy");
                 return (-6);
             }
-            printf("Mandando testigo P2\n");
-            printf("despertando a P4\n");
             sem_post(sem2);
             sem_post(semP);
             

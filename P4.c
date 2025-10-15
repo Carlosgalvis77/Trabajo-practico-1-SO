@@ -54,8 +54,6 @@ int main(int argc, char *argv[]){
 
   sem_wait(sem2);
 
-  printf("P1 me desperto\n");
-
   const char NOMBRE []= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
   int fd2 = shm_open(NOMBRE, O_RDWR, 0666);

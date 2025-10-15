@@ -78,7 +78,6 @@ int main(int argc, char *argv[]){
   }
 
   sem_wait(sem1);
-  printf("P1 me desperto\n");
   
   
   //sem_wait(semH);
