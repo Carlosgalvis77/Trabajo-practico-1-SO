@@ -78,9 +78,6 @@ int main(int argc, char *argv[]){
   }
 
   sem_wait(sem1);
-  
-  
-  //sem_wait(semH);
 
   //aca se altenra la lectura de memoria compartida
   int k = 0;
@@ -99,7 +96,6 @@ int main(int argc, char *argv[]){
 
   sem_wait(semP3);
   int testigo_p3 = -3;
-  //se manda por memoria compartida
   int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
 
   if((fd2 < 0)){
