@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
   for(int i = 0; i < N+1; i++){
     sem_wait(semP3);
     int digito_fibona;
-    if (memcpy(&digito_fibona, k*sizeof(int), sizeof(int)) == NULL){
+    if (memcpy(&digito_fibona,ptr , sizeof(int)) == NULL){
       perror("Error Memcpy");
       return (-7);
     }
