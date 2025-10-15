@@ -128,7 +128,22 @@ int main(int argc, char *argv[]){
             sem_post(semH);
 
             munmap(ptr,SIZE);
-            close(fdp);    
+            close(fdp);
+            int fd2 = open("/tmp/myfifo", O_RDONLY);
+
+            if((fd2 < 0)){
+                perror("Error en open\n");
+                return(-4);
+            }
+            int testigo_p3;
+            if((read(fd2,&testigo_p3,sizeof(int)))<0){
+
+                perror("Error en read de testigo3\n");
+                return(-4);
+            }else{
+                printf("P1 termina");
+            } 
+            close(fd2);
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
@@ -172,6 +187,23 @@ int main(int argc, char *argv[]){
             
             munmap(ptr,SIZE);
             close(fdh);
+
+            int fd2 = open("/tmp/myfifo1", O_RDONLY);
+
+            if((fd2 < 0)){
+                perror("Error en open\n");
+                return(-4);
+            }
+            int testigo_p4;
+            if((read(fd2,&testigo_p4,sizeof(int)))<0){
+
+                perror("Error en read de testigo4\n");
+                return(-4);
+            }else{
+                printf("P2 termina");
+            } 
+            return -1;
+            close(fd2);
         }else{
             perror("Fallo al crear P1\n");
         }

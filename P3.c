@@ -111,10 +111,10 @@ int main(int argc, char *argv[]){
   }
 
   sem_post(semP4);
-
+  
   close(fd2);                    
   munmap(ptr,SIZE);
   close(fd1);                             
-  
+  printf("P3 termina");
 }
 
