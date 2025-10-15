@@ -138,7 +138,7 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de testigo3\n");
                 return(-14);
-            }else if(fd2 == -3){
+            }else if(testigo_p3 == -3){
                 printf("P1 terminan\n");
             } 
             sem_post(semH);
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de testigo4\n");
                 return(-20);
-            }else{
+            }else if(testigo_p4 == -3){
                 printf("P2 termina\n");
             } 
             sem_close(semP);
