@@ -80,15 +80,14 @@ int main(int argc, char *argv[]){
   sem_wait(sem1);
 
   //aca se altenra la lectura de memoria compartida
-  int k = 1;
-  for(int i = 0; i < N; i++){
+  int k = -1;
+  for(int i = 1; i < N+1; i++){
     sem_wait(semP3);
     int digito_fibona;
     if (memcpy(&digito_fibona, ((char *)ptr + k*sizeof(int)), sizeof(int)) == NULL){
       perror("Error Memcpy");
       return (-7);
     }
-   
     printf("%d\n", digito_fibona);
     k += 2;
     sem_post(semP4);

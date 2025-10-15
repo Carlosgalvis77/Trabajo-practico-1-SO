@@ -108,7 +108,6 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
-                printf("%d\n", b);
                 j += 2;
                 sem_post(semH);
                 //FIN DE PUNTO CRITICO

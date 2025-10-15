@@ -76,7 +76,6 @@ int main(int argc, char *argv[]){
       perror("Error Memcpy");
       return (-9);
     }
-    //semaforo
     printf("%d\n", digito_potencia);
     h += 2; 
     sem_post(semP3); 
