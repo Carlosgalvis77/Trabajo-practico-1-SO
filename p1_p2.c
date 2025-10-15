@@ -37,6 +37,7 @@ int main(int argc, char *argv[]){
         return -2;
     }
     
+    printf("p1 trabajando\n");
     //Mkfifo para mandar el N a P3 para crear la memoria compartida
     int fdp3 = open("/tmp/myfifo", O_WRONLY);
     if(fdp3 <  0){
@@ -76,10 +77,10 @@ int main(int argc, char *argv[]){
     }
 
     if (v1 == 0 && v2 ==0){
-
+        printf("Creando P2 desde P1\n");
         pid_t P2=fork();
         if(P2>0){
-
+            printf("ejecutando papa\n");
             int a = atoi(argv[2]);
             int b = atoi(argv[3]);
 
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]){
                 return (-3);
             }
             int j = 0;
-
+            printf("empezando a crear fibo\n");
             for(int i = 0;i < N; i++){
 
                 //PUNTO CRITICO
@@ -111,39 +112,24 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
-
+                printf("copiando en el buffer fibo\n");
                 j += 2;
                 sem_post(semH);
                 //FIN DE PUNTO CRITICO
             }
             sem_wait(semP);
-
+            printf("mandando testigo al buffer\n");
             int testigo_p1 = -1;
             if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
                 perror("Error Memcpy");
                 return (-6);
             }
-
+            printf("despertando a P3\n");
             sem_post(sem1);
             sem_post(semH);
 
             munmap(ptr,SIZE);
-            close(fdp);
-            int fd2 = open("/tmp/myfifo", O_RDONLY);
-
-            if((fd2 < 0)){
-                perror("Error en open\n");
-                return(-4);
-            }
-            int testigo_p3;
-            if((read(fd2,&testigo_p3,sizeof(int)))<0){
-
-                perror("Error en read de testigo3\n");
-                return(-4);
-            }else{
-                printf("P1 termina\n");
-            } 
-            close(fd2);
+            close(fdp);    
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
@@ -170,7 +156,7 @@ int main(int argc, char *argv[]){
                     perror("Error Memcpy");
                     return (-5);
                 }
-
+                printf("copiando exp\n");
                 l += 2;
                 sem_post(semP);
                 //FIN DE PUNTO CRITICO
@@ -181,29 +167,13 @@ int main(int argc, char *argv[]){
                 perror("Error Memcpy");
                 return (-6);
             }
-
+            printf("Mandando testigo P2\n");
+            printf("despertando a P4\n");
             sem_post(sem2);
             sem_post(semP);
             
             munmap(ptr,SIZE);
             close(fdh);
-
-            int fd2 = open("/tmp/myfifo1", O_RDONLY);
-
-            if((fd2 < 0)){
-                perror("Error en open\n");
-                return(-4);
-            }
-            int testigo_p4;
-            if((read(fd2,&testigo_p4,sizeof(int)))<0){
-
-                perror("Error en read de testigo4\n");
-                return(-4);
-            }else{
-                printf("P2 termina\n");
-            } 
-            return -1;
-            close(fd2);
         }else{
             perror("Fallo al crear P1\n");
         }

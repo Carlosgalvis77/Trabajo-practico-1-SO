@@ -78,6 +78,10 @@ int main(int argc, char *argv[]){
   }
 
   sem_wait(sem1);
+  printf("P1 me desperto\n");
+  
+  
+  //sem_wait(semH);
 
   //aca se altenra la lectura de memoria compartida
   int k = 0;
@@ -111,10 +115,10 @@ int main(int argc, char *argv[]){
   }
 
   sem_post(semP4);
-  
+
   close(fd2);                    
   munmap(ptr,SIZE);
   close(fd1);                             
-  printf("P3 termina\n");
+  
 }
 
