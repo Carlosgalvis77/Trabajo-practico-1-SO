@@ -103,8 +103,8 @@ int main(int argc, char *argv[]){
                 int next = a + b;
                 a = b;
                 b = next;   
-
-                if((memcpy(((char *)ptr + (j)*sizeof(int)),&b,sizeof(int))) == NULL){
+        
+                if((memcpy(((char *)ptr + j*sizeof(int)),&b,sizeof(int))) == NULL){
                     perror("Error Memcpy");
                     return (-5);
                 }
