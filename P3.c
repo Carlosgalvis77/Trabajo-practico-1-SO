@@ -71,35 +71,33 @@ int main(int argc, char *argv[]){
   int k = 0;
   for(int i = 0; i < N; i++){
     int digito_fibo;
-    if (memcpy(&digito_fibo, (char *)ptr + k*sizeof(int), sizeof(digito_fibo)) == NULL){
+    if (memcpy(&digito_fibo, (char *)ptr + k*sizeof(int), sizeof(int)) == NULL){
       perror("Error Memcpy");
       return (-7);
     }
     //semaforo
     printf("%d\n", digito_fibo);
     k += 2;
-    int n_testigo_p3 = atoi(argv[1]) - 1;
-    if(i == n_testigo_p3){
-      int testigo_p3 = -3;
-      //se manda por memoria compartida
-      int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
 
-      if((fd2 < 0)){
-        perror("Error en open\n");
-        return(-4);
-      }
-      if((write(fd2,&testigo_p3,sizeof(int)))<0){
+  }
+  int testigo_p3 = -3;
+  //se manda por memoria compartida
+  int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
 
-        perror("Error en write de N\n");
-        return(-4);
+  if((fd2 < 0)){
+    perror("Error en open\n");
+    return(-4);
+  }
+  if((write(fd2,&testigo_p3,sizeof(int)))<0){
 
-      }
-      close(fd2);
+    perror("Error en write de N\n");
+    return(-4);
+
+  }
+  close(fd2);
                     
-    }
-    munmap(ptr,SIZE);
-    close(fd1);     
-  }                          
-  
+    
+  munmap(ptr,SIZE);
+  close(fd1);                             
   
 }
