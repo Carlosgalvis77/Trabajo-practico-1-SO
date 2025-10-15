@@ -191,6 +191,7 @@ int main(int argc, char *argv[]){
             close(fdh);
 
             sem_wait(semH);
+
             int fd2 = open("/tmp/myfifo1", O_RDONLY);
 
             if((fd2 < 0)){
@@ -205,6 +206,7 @@ int main(int argc, char *argv[]){
             }else if(testigo_p4 == -3){
                 printf("P2 termina\n");
             } 
+            
             sem_post(semP);
 
             sem_close(semP);
