@@ -57,12 +57,12 @@ int main(int argc, char *argv[]){
     return(-26);
 
   }
-  close(fd);
 
   //creacion de memoria compartida:
   const char NOMBRE[]= "/MEMP3";
   const int SIZE = (2 * (N+2)) * sizeof(int);
-  int fd1 = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
+  int fd1 = shm_open(NOMBRE, O_CREAT | O_RDWR | O_TRUNC, 0666);
+  close(fd);
   if (fd1 < 0) {
     perror("Error en shm_open");
     return(-27);
