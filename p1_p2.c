@@ -142,7 +142,9 @@ int main(int argc, char *argv[]){
                 perror("Error en read de N\n");
                 return(-4);
             }else{
+                sem_wait(semP);
                 printf("P1 termina\n");
+                sem_post(semH);
                 return(0);
             }
             close(fd);  
@@ -201,8 +203,10 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de N\n");
                 return(-4);
-            }else{
+            }else{ 
+                sem_wait(semP);
                 printf("P2 termina\n");
+                sem_post(semH);
                 return(0);
             }
         }else{
