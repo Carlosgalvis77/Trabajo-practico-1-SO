@@ -99,9 +99,9 @@ int main(int argc, char *argv[]){
 
   }
   sem_post(semP3); 
-  
+
   close(fd3); 
   munmap(ptr,SIZE);
   close(fd2);
-  printf("P3 termina");         
+  printf("P3 termina\n");         
 }

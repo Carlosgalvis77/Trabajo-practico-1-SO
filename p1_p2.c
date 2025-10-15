@@ -141,7 +141,7 @@ int main(int argc, char *argv[]){
                 perror("Error en read de testigo3\n");
                 return(-4);
             }else{
-                printf("P1 termina");
+                printf("P1 termina\n");
             } 
             close(fd2);
         }else if(P2==0){
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
                 perror("Error en read de testigo4\n");
                 return(-4);
             }else{
-                printf("P2 termina");
+                printf("P2 termina\n");
             } 
             return -1;
             close(fd2);
