@@ -151,7 +151,7 @@ int main(int argc, char *argv[]){
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
-            int fdh = shm_open(NOMBRE, O_RDWR, 0666);
+            int fdh = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
             if (fdh < 0) {
                 perror("Error en shm_open"); 
                 return(-15);
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]){
             
             munmap(ptr,SIZE);
             close(fdh);
-            
+
             sem_wait(semH);
             int fd2 = open("/tmp/myfifo1", O_RDONLY);
 
