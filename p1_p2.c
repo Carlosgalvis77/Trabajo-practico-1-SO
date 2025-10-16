@@ -26,14 +26,18 @@ int main(int argc, char *argv[]){
     sem_unlink("/semP");
     sem_t *semP = sem_open("/semP", O_CREAT, 0666, 1);
     if (semP == SEM_FAILED) {
-        perror("sem_open P1");
+        perror("sem_open PP");
         return -3;
     }
-
+    sem_t *semP1 = sem_open("/semP1", 0); 
+    if (semP1 == SEM_FAILED) {
+        perror("sem_open P1");
+        return -1;
+    }  
     sem_unlink("/semH");
     sem_t *semH = sem_open("/semH", O_CREAT, 0666, 0);
     if (semH == SEM_FAILED) {
-        perror("sem_open P2");
+        perror("sem_open PH");
         return -4;
     }
     
@@ -68,13 +72,6 @@ int main(int argc, char *argv[]){
 
     }
     close(fdp4);
-    sem_t *semInit = sem_open("/semInit", 0);
-    if(semInit == SEM_FAILED){
-        printf("Error: P3 no ha creado la memoria compartida\n");
-        return -1;
-    }
-    sem_wait(semInit);
-    sem_close(semInit);
 
     int v1, v2;
     if (sem_getvalue(sem1, &v1) == -1 || sem_getvalue(sem2, &v2) == -1) {
@@ -82,14 +79,16 @@ int main(int argc, char *argv[]){
         return -9; 
     }
     if (v1 < 0 && v2 <0){
-        printf("P3 o P4 no está disponible\n");
+        printf("P3 o P4 no están en ejecución\n");
     }
     if (v1 == 0 && v2 ==0){
+        //paro a p1 
+        sem_wait(semP1);
+        //creo a p2
         pid_t P2=fork();
         if(P2>0){
             int a = atoi(argv[2]);
             int b = atoi(argv[3]);
-
             // Aca se crea el bufer y se agrega b
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
@@ -121,18 +120,17 @@ int main(int argc, char *argv[]){
                 sem_post(semH);
                 //FIN DE PUNTO CRITICO
             }
-            sem_wait(semP);
+            sem_wait(semH);
             int testigo_p1 = -1;
             if((memcpy(((char *)ptr + (j+2)*sizeof(int)),&testigo_p1,sizeof(int))) == NULL){
                 perror("Error Memcpy");
                 return (-6);
             }
-            sem_post(sem1);
             sem_post(semH);
 
             munmap(ptr,SIZE);
-            close(fdp);  
-
+            close(fdp); 
+            
             int fd2 = open("/tmp/myfifo", O_RDONLY);
 
             if((fd2 < 0)){
@@ -141,17 +139,21 @@ int main(int argc, char *argv[]){
             }
             int testigo_p3;
             if((read(fd2,&testigo_p3,sizeof(int)))<0){
-
+                
                 perror("Error en read de testigo3\n");
                 return(-14);
-            }else{
+            }else if(testigo_p3==-3){
                 printf("P1 terminan\n");
+                sem_post(semH);
+                sem_close(sem1);
+                sem_close(sem2);
+                sem_close(semP);
+                sem_close(semH);
+                sem_close(semP1);
+                close(fd2); 
+                return -66;
             } 
-            sem_close(sem1);
-            sem_close(sem2);
-            sem_close(semP);
-            sem_close(semH);
-            close(fd2);  
+             
         }else if(P2==0){
             const char NOMBRE [] = "/MEMP3";
             const int SIZE = (2 * (N+2)) * sizeof(int);
@@ -182,17 +184,19 @@ int main(int argc, char *argv[]){
                 sem_post(semP);
                 //FIN DE PUNTO CRITICO
             }
-            sem_wait(semH);
             int testigo_p2 = -2;
             if((memcpy(((char *)ptr + (l+2)*sizeof(int)),&testigo_p2,sizeof(int))) == NULL){
                 perror("Error Memcpy");
                 return (-18);
             }
+            //Activo a p3
+            sem_post(sem1);
+            //activo a p4
             sem_post(sem2);
-            sem_post(semP);
             
             munmap(ptr,SIZE);
             close(fdh);
+            sem_wait(semH);
             int fd2 = open("/tmp/myfifo1", O_RDONLY);
 
             if((fd2 < 0)){
@@ -204,11 +208,13 @@ int main(int argc, char *argv[]){
 
                 perror("Error en read de testigo4\n");
                 return(-20);
-            }else{
+            }else if(testigo_p4==-3){
                 printf("P2 termina\n");
             } 
             sem_close(semP);
             sem_close(semH);
+            sem_close(sem2);
+            sem_close(sem1);
             return -1;
             close(fd2);
         }else{

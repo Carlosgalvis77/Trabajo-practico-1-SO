@@ -34,6 +34,12 @@ int main(int argc, char *argv[]){
     perror("Ya esta creado el semaforo\n");
     return -23;
   }
+  sem_unlink("/semP1");
+  sem_t *semP1 = sem_open("/semP1", O_CREAT, 0666, 0);
+  if (semP1 == SEM_FAILED) {
+      perror("ssem_open P1 en P3");
+      return -3;
+  }
   
   printf("Esperando a P1\n");
   unlink("/tmp/myfifo");
@@ -47,27 +53,20 @@ int main(int argc, char *argv[]){
 
     perror("Error en open\n");
     return(-25);
-
   }
-
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
     perror("Error en read de N\n");
     return(-26);
-
   }
   close(fd);
 
-  sem_t *semInit = sem_open("/semInit", O_CREAT, 0666, 0);
-  if(semInit == SEM_FAILED){
-    printf("Error creando semáforo inicialización\n");
-    return -1;
-  }
   //creacion de memoria compartida:
+  
   const char NOMBRE[]= "/MEMP3";
-  const int SIZE = (2 * (N+2)) * sizeof(int);
   shm_unlink(NOMBRE);
+  const int SIZE = (2 * (N+2)) * sizeof(int);
   int fd1 = shm_open(NOMBRE, O_CREAT | O_RDWR, 0666);
   if (fd1 < 0) {
     perror("Error en shm_open");
@@ -84,13 +83,13 @@ int main(int argc, char *argv[]){
     perror("Error MAP_FAILED");
     return (-29);
   }
-  sem_post(semInit);
-  sem_close(semInit);
-
+  //despierto a p1
+  sem_post(semP1);
+  //apago a p3
+  sem_wait(sem1);
   //aca se altenra la lectura de memoria compartida
   int k = 0;
   for(int i = 0; i < N; i++){
-    sem_wait(sem1);
     sem_wait(semP3);
     int digito_fibo;
     if (memcpy(&digito_fibo, (char *)ptr + k*sizeof(int), sizeof(int)) == NULL){
@@ -102,8 +101,7 @@ int main(int argc, char *argv[]){
     k += 2;
     sem_post(semP4);
   }
-
-  sem_wait(semP3);
+  sem_wait(semP4);
   int testigo_p3 = -3;
   //se manda por memoria compartida
   int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
@@ -118,8 +116,8 @@ int main(int argc, char *argv[]){
     perror("Error en write de N\n");
     return(-32);
   }
-
   sem_post(semP4);
+  
 
   close(fd2);                    
   munmap(ptr,SIZE);
@@ -128,8 +126,11 @@ int main(int argc, char *argv[]){
   shm_unlink("/MEMP3");
   sem_close(sem1);
   sem_close(semP3);
-  sem_close(semP4);   
-  printf("P3 termina\n");                        
+  sem_close(semP4);
+  sem_close(semP1); 
+  shm_unlink(NOMBRE);
+  printf("P3 termina\n");  
+  return -66;                      
   
 }
 

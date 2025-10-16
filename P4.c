@@ -17,17 +17,16 @@ int main(int argc, char *argv[]){
   } 
 
   sem_t *semP3 = sem_open("/semP3", 0); 
-    if (semP3 == SEM_FAILED) {
-        perror("sem_open P3 en P4");
-        return -34;
-    }
-
+  if (semP3 == SEM_FAILED) {
+    perror("sem_open P3 en P4");
+    return -34;
+  }
   sem_t *semP4 = sem_open("/semP4", 0); 
   if (semP4 == SEM_FAILED) {
       perror("sem_open P4 en P4");
       return -35;
   }
-  
+
   printf("Esperando a P1\n");
   unlink("/tmp/myfifo1");
   if((mkfifo("/tmp/myfifo1",0666))<0){
@@ -83,7 +82,6 @@ int main(int argc, char *argv[]){
     sem_post(semP3); 
   }        
   
-  sem_wait(semP4);
   int testigo_p4 = -3;
   //se manda por memoria compartida
   int fd3 = open("/tmp/myfifo1", O_WRONLY | O_CREAT);
@@ -98,7 +96,7 @@ int main(int argc, char *argv[]){
     return(-43);
 
   }
-  sem_post(semP3);
+
   close(fd3); 
   munmap(ptr,SIZE);
   close(fd2); 
@@ -106,5 +104,6 @@ int main(int argc, char *argv[]){
   sem_close(semP3);
   sem_close(semP4);
   unlink("/tmp/myfifo1");   
-  printf("P4 termina\n");        
+  printf("P4 termina\n");
+  return -66;       
 }
