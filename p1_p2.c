@@ -143,7 +143,8 @@ int main(int argc, char *argv[]){
                 }else if(testigo_p3 == -3){
 
                     printf("P1 termina\n");
-                    sem_post(semH);
+                    // Barrera final: habilita a P2 para imprimir
+                    sem_post(semP);
 
                     close(fd2);
                     unlink("/tmp/myfifo"); 
@@ -202,7 +203,6 @@ int main(int argc, char *argv[]){
                 
                 munmap(ptr,SIZE);
                 close(fdh);
-                sem_wait(semH);
                 sem_wait(semP);
                 int fdhmy = open("/tmp/myfifo1", O_RDONLY);
 
@@ -217,9 +217,10 @@ int main(int argc, char *argv[]){
                     return(-20);
                 }else if (testigo_p4  == -3){
                     printf("P2 termina\n");
-                    sem_post(semP);
                     close(fdhmy);
                     unlink("/tmp/myfifo1"); 
+
+
                     sem_close(sem2);
                     sem_close(sem1);
                     sem_close(semP1);
