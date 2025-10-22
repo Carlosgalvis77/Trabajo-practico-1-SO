@@ -9,6 +9,7 @@
 
 
 int main(int argc, char *argv[]){
+  sem_unlink("/sem2");
   sem_t *sem2;
   sem2 = sem_open("/sem2",O_CREAT,0666,0);
   if (sem2== SEM_FAILED ){
@@ -84,7 +85,7 @@ int main(int argc, char *argv[]){
   
   int testigo_p4 = -3;
   //se manda por memoria compartida
-  int fd3 = open("/tmp/myfifo1", O_WRONLY | O_CREAT);
+  int fd3 = open("/tmp/myfifo1", O_RDWR);
 
   if((fd3 < 0)){
     perror("Error en open\n");
@@ -95,15 +96,14 @@ int main(int argc, char *argv[]){
     perror("Error en write de N\n");
     return(-43);
 
-  }
-
-  close(fd3); 
-  munmap(ptr,SIZE);
-  close(fd2); 
-  sem_close(sem2);
-  sem_close(semP3);
-  sem_close(semP4);
-  unlink("/tmp/myfifo1");   
-  printf("P4 termina\n");
-  return -66;       
+  }else{
+    close(fd3); 
+    munmap(ptr,SIZE);
+    close(fd2); 
+    sem_close(sem2);
+    sem_close(semP3);
+    sem_close(semP4); 
+    printf("P4 termina\n");
+    return -66;   
+  }    
 }

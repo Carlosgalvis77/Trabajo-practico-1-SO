@@ -41,19 +41,20 @@ int main(int argc, char *argv[]){
       return -3;
   }
   
-  printf("Esperando a P1\n");
+
   unlink("/tmp/myfifo");
   if((mkfifo("/tmp/myfifo",0666))<0){
   
     perror("Error en mkfifo\n");
     return(-24);
   }
-  int fd = open("/tmp/myfifo", O_RDONLY);
+  int fd = open("/tmp/myfifo", O_RDWR);
   if(fd <  0){
-
+  
     perror("Error en open\n");
     return(-25);
   }
+  printf("Esperando a P1\n");
   int N;
   if((read(fd,&N,sizeof(int)))<0){
 
@@ -101,11 +102,10 @@ int main(int argc, char *argv[]){
     k += 2;
     sem_post(semP4);
   }
-  sem_wait(semP4);
+
   int testigo_p3 = -3;
   //se manda por memoria compartida
   int fd2 = open("/tmp/myfifo", O_WRONLY | O_CREAT);
-
   if((fd2 < 0)){
     perror("Error en open\n");
     return(-31);
@@ -115,22 +115,20 @@ int main(int argc, char *argv[]){
 
     perror("Error en write de N\n");
     return(-32);
-  }
-  sem_post(semP4);
-  
-
-  close(fd2);                    
-  munmap(ptr,SIZE);
-  close(fd1);
-  unlink("/tmp/myfifo");
-  shm_unlink("/MEMP3");
-  sem_close(sem1);
-  sem_close(semP3);
-  sem_close(semP4);
-  sem_close(semP1); 
-  shm_unlink(NOMBRE);
-  printf("P3 termina\n");  
-  return -66;                      
+  }else{
+    close(fd2);                    
+    munmap(ptr,SIZE);
+    close(fd1);
+    unlink("/tmp/myfifo");
+    shm_unlink("/MEMP3");
+    sem_close(sem1);
+    sem_close(semP3);
+    sem_close(semP4);
+    sem_close(semP1); 
+    shm_unlink(NOMBRE);
+    printf("P3 termina\n");  
+    return 0;   
+  }                   
   
 }
 
