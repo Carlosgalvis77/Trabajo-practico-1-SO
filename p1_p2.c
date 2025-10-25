@@ -37,7 +37,6 @@ int main(int argc, char *argv[]){
             perror("sem_open PH");
             return -4;
         }
-
         //Mkfifo para mandar el N a P3 para crear la memoria compartida
         int fdp3 = open("/tmp/myfifo", O_WRONLY);
         if(fdp3 <  0){
@@ -141,11 +140,10 @@ int main(int argc, char *argv[]){
                     perror("Error en read de testigo3\n");
                     return(-14);
                 }else if(testigo_p3 == -3){
-
-                    printf("P1 termina\n");
-                    // Barrera final: habilita a P2 para imprimir
-                    sem_post(semP);
-
+                    sem_post(semH);  
+                    sem_wait(semP);  
+                    write(STDOUT_FILENO, "P1 termina\n", 11);
+                    sem_wait(semP);
                     close(fd2);
                     unlink("/tmp/myfifo"); 
                     sem_close(sem2);
@@ -153,12 +151,7 @@ int main(int argc, char *argv[]){
                     sem_close(semP1);
                     sem_close(semP);
                     sem_close(semH); 
-                    sem_unlink("/sem1");
-                    sem_unlink("/sem2");
-                    sem_unlink("/semP");
-                    sem_unlink("/semP1");
-                    sem_unlink("/semH");
-                    return(-77);
+
                 }
                 
             }else if(P2==0){
@@ -203,7 +196,7 @@ int main(int argc, char *argv[]){
                 
                 munmap(ptr,SIZE);
                 close(fdh);
-                sem_wait(semP);
+
                 int fdhmy = open("/tmp/myfifo1", O_RDONLY);
 
                 if((fdhmy < 0)){
@@ -216,29 +209,32 @@ int main(int argc, char *argv[]){
                     perror("Error en read de testigo4\n");
                     return(-20);
                 }else if (testigo_p4  == -3){
-                    printf("P2 termina\n");
+
+                    sem_wait(semH);
+                    write(STDOUT_FILENO, "P2 termina\n", 11);
+                    sem_post(semP);
+
                     close(fdhmy);
                     unlink("/tmp/myfifo1"); 
-
 
                     sem_close(sem2);
                     sem_close(sem1);
                     sem_close(semP1);
-                    sem_close(semP);
                     sem_close(semH);
-                    sem_unlink("/sem1");
-                    sem_unlink("/sem2");
-                    sem_unlink("/semP");
-                    sem_unlink("/semP1");
-                    sem_unlink("/semH");
-                    return(-78);
+                    sem_post(semP);
+                    sem_close(semP);
+
                 } 
                 
                 
             }else{
                 perror("Fallo al crear P1\n");
             }
-                 
+            sem_unlink("/sem1");
+            sem_unlink("/sem2");
+            sem_unlink("/semP");
+            sem_unlink("/semP1");
+            sem_unlink("/semH");      
         }
     }                   
 }
